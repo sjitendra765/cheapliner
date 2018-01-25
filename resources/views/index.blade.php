@@ -43,7 +43,7 @@
   <link rel="stylesheet" href="css/cs-skin-border.css">
   
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" type="text/css" href="flightslider.css">
+  
 
 
   <!-- Modernizr JS -->

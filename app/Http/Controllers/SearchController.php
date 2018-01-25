@@ -12,6 +12,8 @@ use Carbon\Carbon;
 class SearchController extends Controller
 {
 
+	private $client;
+
 	
     public function flightSearch(Request $request)
     {  
@@ -39,6 +41,25 @@ class SearchController extends Controller
 		
 	}
 
+	public function autoSuggest($data){
+
+		// $this->client = new Client([]);
+		$this->client = new Client(['headers' => ['Accept' => 'application/json']]);
+		$varApiKey = 'apiKey=se785889316536991843943175619637';
+		// $data = "nep";
+		// $data = $request['query'];
+
+		 $url = "http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/GB/GBP/en-GB?query=".$data."&".$varApiKey ;
+
+
+		        $res = $this->client->get($url , [
+		        ]);
+
+		        $s = ($res->getBody());
+
+		        return $s;
+
+	}
 
 
 	public function convertDate($value)

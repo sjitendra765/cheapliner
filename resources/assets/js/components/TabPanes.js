@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import { Creatable } from 'react-select'
 import Select from 'react-virtualized-select';
@@ -7,23 +8,52 @@ import createFilterOptions from 'react-select-fast-filter-options';
 import 'react-select/dist/react-select.css';
 import 'react-virtualized/styles.css'
 import 'react-virtualized-select/styles.css'
-
+import * as actions from './actions'
 
 
 class TabPanes extends Component {
     constructor(props) {
     super(props);
-    this.state = {from_place: '',
+    this.state = {
+            flyingData:{
+                from_place: '',
                   to_place:'',
                   date_start:'',
                     date_end: '',
                     flying_class:'economy',
                     adults: '',
                     children: ''
-                };
+                },
+                options:[]
+
+                
+            }
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  getautosuggest(input){
+    if(input !=''){
+    var val = input
+    console.log(input)
+    axios.get('/autoSuggest/'+ val)
+    .then(r=>{
+        var option = [];
+        console.log(r.data.Places)
+        r.data.Places.map(place=>{
+            var placeId = place.PlaceId.replace("-sky","");
+            var values = {value:placeId, label:place.PlaceName + '(' + placeId + ')'}
+            option.push(values)
+        })
+        console.log(option)
+        this.props.createFlight(option);
+        this.setState({
+            options:option
+        })
+    })
+    .catch(err=>console.log(err))
+    return input;
+    }
   }
    handleChange(event) {
     const target = event.target;
@@ -46,17 +76,7 @@ class TabPanes extends Component {
     event.preventDefault();
   }
     render() {
-        const options = [
-    // ..
-    { value: 'Stanford University', label: 'Stanford University' },
-    { value: 'Standord University', label: 'Standord University' },
-    { value: 'sidney University', label: 'sidney University' },
-    { value: 'paris University', label: 'paris University' },
-    { value: 'south dakota University', label: 'south dakota University' },
-    { value: 'sanfransisco University', label: 'sanfransisco University' },
-    { value: 'south korea University', label: 'south korea University' },
-    // ...
-];
+        const options = this.state.options;
 
       
         return (
@@ -69,18 +89,28 @@ class TabPanes extends Component {
                                                 <div className="input-field">
                                                     <label htmlFor="from">From:</label>
                                                     <Select
-        name="university"
-        value="one"
+        name="from_place"
+        value={this.state.flyingData.from_place}
         options={options}
         selectComponent={Creatable}
-        onChange={val => console.log(val)}
+        onChange={val => {var flyingData={...this.state.flyingData};flyingData.from_place=val;this.setState({flyingData})}}
+        onInputChange={this.getautosuggest.bind(this)}
+        
     />
                                                 </div>
                                             </div>
                                             <div className="col-xxs-12 col-xs-6 mt">
                                                 <div className="input-field">
                                                     <label htmlFor="from">To:</label>
-                                                    <input type="text" className="form-control"  id="from-place" name="to_place" value={this.state.to_place} onChange={this.handleChange}  placeholder="Tokyo, Japan"/>
+                                                    <Select
+        name="to_place"
+        value={this.state.flyingData.to_place}
+        options={options}
+        selectComponent={Creatable}
+        onChange={val => {var flyingData={...this.state.flyingData};flyingData.to_place=val;this.setState({flyingData})}}
+        onInputChange={this.getautosuggest.bind(this)}
+        
+    />
                                                 </div>
                                             </div>
                                             <div className="col-xxs-12 col-xs-6 mt alternate">
@@ -140,7 +170,19 @@ class TabPanes extends Component {
     }
 }
 
-export default TabPanes;
+const mapStateToProps = (state, ownProps) =>{
+    return {
+        flights: state.flight
+    }
+} 
 
+const mapDsipatchToProps = (dispatch) =>{
+    return {
+        createFlight: flight => dispatch(actions.createFlight(flight))
+    }
+}
+
+
+export default connect(mapStateToProps,mapDsipatchToProps)(TabPanes);
 
 

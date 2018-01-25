@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import NavBar from './NavBar';
 import TabPanes from './TabPanes'
-
+import { connect } from 'react-redux'
 
 class ListFlight extends Component {
        constructor(props) {
@@ -79,8 +79,22 @@ class ListFlight extends Component {
         );
     }
 }
+const mapStateToProps = (state, ownProps) =>{
+  console.log(state)
+    return {
+        flights: state.flight
+    }
+} 
 
-export default ListFlight;
+const mapDsipatchToProps = (dispatch) =>{
+    return {
+       
+    }
+}
+
+
+export default connect(mapStateToProps,mapDsipatchToProps)(ListFlight);
+
 
 
 
