@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import querystring from 'querystring'
 import { Creatable } from 'react-select'
 import Select from 'react-virtualized-select';
 import createFilterOptions from 'react-select-fast-filter-options';
@@ -32,21 +33,22 @@ class TabPanes extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+
   getautosuggest(input){
     if(input !=''){
     var val = input
     console.log(input)
+    var query = querystring.stringify({"demo":"dsjcb"})
     axios.get('/autoSuggest/'+ val)
     .then(r=>{
         var option = [];
-        console.log(r.data.Places)
+        console.log(r)
         r.data.Places.map(place=>{
             var placeId = place.PlaceId.replace("-sky","");
-            var values = {value:placeId, label:place.PlaceName + '(' + placeId + ')'}
+            var values = {value:placeId, label: placeId + "-" + place.PlaceName}
             option.push(values)
         })
-        console.log(option)
-        this.props.createFlight(option);
+        console.log(option)        
         this.setState({
             options:option
         })
@@ -56,24 +58,41 @@ class TabPanes extends Component {
     }
   }
    handleChange(event) {
+    console.log("gyhgfdfghj")
     const target = event.target;
     const value =  target.value;
     const name = target.name;
-
+    var flyingData={
+        ...this.state.flyingData,
+        [name]:value
+    };
+    console.log("Sdgg",flyingData)
     this.setState({
-      [name]: value
+      flyingData
     });
   }
    handleSubmit(event) {
+    event.preventDefault();
     //alert('Your favorite flavor is: ' + this.state);
-    axios.get('/airportList')
+    var from_place = this.state.flyingData.from_place.value;
+    var to_place = this.state.flyingData.to_place.value;
+    console.log(from_place)
+    
+    var flyingData={...this.state.flyingData};
+    flyingData.from_place=from_place;
+    flyingData.to_place = to_place;
+    this.setState({flyingData})
+    console.log("jhvhfcfd",this.state.flyingData)
+    var query  = querystring(this.state.flyingData)
+    axios.post('/flightSearch',query)
   .then(function (response) {
+    this.props.createFlight(response);
     console.log(response);
   })
   .catch(function (error) {
     console.log(error);
   });
-    event.preventDefault();
+    
   }
     render() {
         const options = this.state.options;
@@ -116,19 +135,19 @@ class TabPanes extends Component {
                                             <div className="col-xxs-12 col-xs-6 mt alternate">
                                                 <div className="input-field">
                                                     <label htmlFor="date-start">Check In:</label>
-                                                    <input className="form-control datepicker" data-provide="datepicker" data-date-format="dd.mm.yyyy" name="date_start" value={this.state.date_start} onChange={this.handleChange} placeholder="mm/dd/yyyy"/>
+                                                    <input className="form-control datepicker" data-provide="datepicker" data-date-format="dd.mm.yyyy" name="date_start" value={this.state.flyingData.date_start} onChange={this.handleChange} placeholder="mm/dd/yyyy"/>
                                                 </div>
                                             </div>
                                             <div className="col-xxs-12 col-xs-6 mt alternate">
                                                 <div className="input-field">
                                                     <label htmlFor="date-end">Check Out:</label>
-                                                    <input className="form-control datepicker" data-provide="datepicker" data-date-format="dd.mm.yyyy" name="date_end" value={this.state.date_end} onChange={this.handleChange}  placeholder="mm/dd/yyyy"/>
+                                                    <input className="form-control datepicker" data-provide="datepicker" data-date-format="dd.mm.yyyy" name="date_end" value={this.state.flyingData.date_end} onChange={this.handleChange}  placeholder="mm/dd/yyyy"/>
                                                 </div>
                                             </div>
                                             <div className="col-xxs-12 col-xs-6 mt alternate">
                                                 <section>
                                                     <label htmlFor="className">className:</label>
-                                                    <select className="cs-select cs-skin-border" name="flying_class" value={this.state.flying_class} onChange={this.handleChange} >
+                                                    <select className="cs-select cs-skin-border" name="flying_class" value={this.state.flyingData.flying_class} onChange={this.handleChange} >
                                                         <option value="" >Economy</option>
                                                         <option value="economy">Economy</option>
                                                         <option value="first">First</option>
@@ -139,7 +158,7 @@ class TabPanes extends Component {
                                             <div className="col-xxs-12 col-xs-6 mt">
                                                 <section>
                                                     <label htmlFor="className">Adult:</label>
-                                                    <select className="cs-select cs-skin-border" name="adults" value={this.state.adults} onChange={this.handleChange} >
+                                                    <select className="cs-select cs-skin-border" name="adults" value={this.state.flyingData.adults} onChange={this.handleChange} >
                                                         <option value="1">1</option>
                                                         <option value="2">2</option>
                                                         <option value="3">3</option>
@@ -150,8 +169,7 @@ class TabPanes extends Component {
                                             <div className="col-xxs-12 col-xs-6 mt">
                                                 <section>
                                                     <label htmlFor="className">Children:</label>
-                                                    <select className="cs-select cs-skin-border" name="children" value={this.state.children} onChange={this.handleChange} >
-                                                        <option value="" >1</option>
+                                                    <select className="cs-select cs-skin-border" name="children" value={this.state.flyingData.children} onChange={this.handleChange} >
                                                         <option value="1">1</option>
                                                         <option value="2">2</option>
                                                         <option value="3">3</option>

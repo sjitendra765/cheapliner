@@ -18,6 +18,8 @@ Route::get('/', function () {
 });
 
 Route::get('/autoSuggest/{query}','SearchController@autoSuggest');
+Route::post('/flightSearch','SearchController@flightSearch');
+
 
 
 

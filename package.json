@@ -21,7 +21,9 @@
   "dependencies": {
     "axios": "^0.15.3",
     "css-loader": "^0.28.5",
+    "file-loader": "^1.1.6",
     "less-loader": "^4.0.5",
+    "querystring": "^0.2.0",
     "react": "^15.6.1",
     "react-addons-test-utils": "^15.6.2",
     "react-dom": "^15.6.1",
@@ -35,5 +37,6 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "style-loader": "^0.18.2"
-  }
+  },
+  "homepage": "."
 }
