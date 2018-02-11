@@ -11,17 +11,28 @@ class MainBody extends Component {
     super(props);
 }
     render() {
-    	
+    	 var divStyle = {
+            backgroundImage: 'url(images/cover_bg_3.jpg)'
+        }
         return (
-           <div className="col-sm-5 col-md-5">
-                <div className="tabulation animate-box">
-                    <NavBar />
-                    <TabPanes />
-                    <Link to="/listflight">
-                    <button>Go to About</button>
-                </Link>
-                </div>
-          	</div>
+          <div className="fh5co-hero">
+          <div className="fh5co-overlay"></div>
+          <div className="fh5co-cover" style={divStyle}>
+                          <div className="desc">
+                                <div className="container">
+                                      <div className="row">
+                                        <div className="col-sm-5 col-md-5">
+                                             <div className="tabulation animate-box">
+                                                 <NavBar />
+                                                 <TabPanes />
+                                                 
+                                             </div>
+                                        	</div>
+                                      </div>
+                                </div>
+                          </div>
+          </div>
+        </div>
         );
     }
 }

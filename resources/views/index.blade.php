@@ -25,7 +25,9 @@
   <link rel="shortcut icon" href="favicon.ico">
 
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
-  
+  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+
+
   <!-- Animate.css -->
   <link rel="stylesheet" href="css/animate.css">
   <!-- Icomoon Icon Fonts-->
@@ -40,10 +42,12 @@
   <link rel="stylesheet" href="css/bootstrap-datepicker.min.css">
   <!-- CS Select -->
   <link rel="stylesheet" href="css/cs-select.css">
-  <link rel="stylesheet" href="css/cs-skin-border.css">
   
   <link rel="stylesheet" href="css/style.css">
-  
+  <link rel="stylesheet" href="css/style1.css">
+  <link rel="stylesheet" type="text/css" href="css/rc-slider.css">
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 
   <!-- Modernizr JS -->
@@ -61,6 +65,22 @@
   <script src="/js/jquery.min.js"></script>
   <!-- jQuery Easing -->
   <script src="/js/jquery.easing.1.3.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: 0,
+      max: 500,
+      values: [ 75, 300 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+      }
+    });
+    $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+      " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+  } );
+  </script>
   <!-- Bootstrap -->
   <script src="/js/bootstrap.min.js"></script>
   <!-- Waypoints -->

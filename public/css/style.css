@@ -356,7 +356,7 @@ figure {
   position: relative;
   left: 0;
   width: 100%;
-  z-index: 1022;
+  z-index: 8;
   background: #fff;
 }
 

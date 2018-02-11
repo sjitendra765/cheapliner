@@ -17,9 +17,6 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/autoSuggest/{query}','SearchController@autoSuggest');
-Route::post('/flightSearch','SearchController@flightSearch');
-
 
 
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom'; //use
 
 class CustomHeader extends Component {
     render() {
@@ -33,4 +33,4 @@ class CustomHeader extends Component {
     }
 }
 
-export default CustomHeader;
+export default CustomHeader;//namespace

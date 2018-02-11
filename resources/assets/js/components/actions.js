@@ -7,3 +7,12 @@ export const createFlight = (flight) => {
     flight: flight
   }
 };
+export const queryList = (query) => {
+  // Return action
+  return {
+    // Unique identifier
+    type: 'CREATE_QUERY',
+    // Payload
+    query: query
+  }
+};

@@ -5,6 +5,7 @@ import Home from './Example' ;
 import MainBody from './MainBody';
 import Flight from './Flight'
 import ListFlight from './ListFlight';
+import store from './store';
 
 export default () => {
 	return (
@@ -12,8 +13,8 @@ export default () => {
 		<BrowserRouter>
 			<Flight>
 			<Switch>
-			  <Route exact path='/' component={MainBody} />
-			  <Route path='/listflight' component={ListFlight} />
+			  <Route exact path='/' render={(props) => <MainBody />} />
+			  <Route path='/listflight' render={(props) => <ListFlight  />} />
 			</Switch>
 			 </Flight>
 		</BrowserRouter>

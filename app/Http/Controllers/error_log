@@ -1,0 +1,1 @@
+[06-Feb-2018 09:45:06 UTC] PHP Fatal error:  Class 'App\Http\Controllers\Controller' not found in /home/engineering/public_html/cheapliner/app/Http/Controllers/SearchController.php on line 14

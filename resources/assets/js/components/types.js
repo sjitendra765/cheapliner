@@ -1,0 +1,1 @@
+export const CREATE_LIST = 'create_list';
