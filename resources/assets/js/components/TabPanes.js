@@ -45,7 +45,13 @@ class TabPanes extends Component {
                     adults: '',
                     children: '0',
                     sorttype:'price',
-                    sortorder:'asc'
+                    sortorder:'asc',
+                    inboundDepartEndTime: '23:59',
+                    inboundDepartStartTime:'00:00',
+                    outboundDepartEndTime:'23:59',
+                    outboundDepartStartTime:'00:00',
+                    duration: 1800,
+		    currency: 'EUR'
                 },
                 options:[],
                 options2:[],
@@ -56,7 +62,8 @@ class TabPanes extends Component {
                 errDateEnd:'hidden',
                 errdateE: 'hidden',
                 errdate: 'hidden',
-                sameair:'hidden'
+                sameair:'hidden',
+                disabled: ''
                 
             }
 
@@ -78,7 +85,7 @@ class TabPanes extends Component {
   closeModal() {
     this.setState({modalIsOpen: false});
   }
-async  getautosuggest(input){
+  getautosuggest(input){
     if(input !=''){
     var val = input
     console.log(input)
@@ -109,7 +116,7 @@ async  getautosuggest(input){
     console.log(input)
     var query = querystring.stringify({"demo":"dsjcb"})
     axios.get('/api/autoSuggest/'+ val)
-    .then(r=>{
+    .then(r=>{      
         var option = [];
         console.log(r)
         r.data.Places.map(place=>{
@@ -214,6 +221,8 @@ async  getautosuggest(input){
     var flyingclass = document.getElementById("flying_class").value
     var adults = document.getElementById("adults").value
     var children = document.getElementById("children").value
+    var currency = document.getElementById("currency").value
+
 
     console.log(typeof date_end+ "date")
 
@@ -224,6 +233,7 @@ async  getautosuggest(input){
     flyingData.flying_class = flyingclass;
     flyingData.adults = adults;
     flyingData.children = children;
+    flyingData.currency = currency;
     flyingData.date_start = date_start;
     flyingData.date_end = date_end;
     flyingData.sorttype = 'price';
@@ -237,7 +247,7 @@ async  getautosuggest(input){
     //flyingData.stops = null;
     var query = querystring.stringify(flyingData)
     console.log("final query", query)
-    this.setState({modalIsOpen: true});
+    this.setState({modalIsOpen: true, disabled: "disabled"});
    var data = await axios.post('/api/flightSearch',query)
 
 
@@ -280,6 +290,7 @@ async  getautosuggest(input){
         id="from_place"
         value={this.state.flyingData.from_place}
         options={options}
+        disabled= {this.state.disabled}
         selectComponent={Creatable}
         onInputChange={this.getautosuggest.bind(this)}
         onChange={val => {var flyingData={...this.state.flyingData};flyingData.from_place=val;this.setState({flyingData: flyingData,errFrom: "hidden"})}}
@@ -296,6 +307,7 @@ async  getautosuggest(input){
         id="to_place"
         value={this.state.flyingData.to_place}
         options={options2}
+        disabled= {this.state.disabled}
         selectComponent={Creatable}
         onChange={val => {var flyingData={...this.state.flyingData};flyingData.to_place=val;this.setState({flyingData:flyingData,errTo: "hidden",sameair:"hidden"})}}
         onInputChange={this.getautosuggest2.bind(this)}
@@ -307,7 +319,7 @@ async  getautosuggest(input){
                                             <div className="col-xxs-12 col-xs-6 mt alternate">
                                                 <div className="input-field">
                                                     <label htmlFor="date-start">Check In:</label>
-                                                    <input className="form-control datepicker" data-provide="datepicker" data-date-format="dd.mm.yyyy" id = "date_start" name="date_start" onSelect={this.handleChange} placeholder="dd.mm.yyyy"/>
+                                                    <input className="form-control datepicker" disabled= {this.state.disabled} data-provide="datepicker" data-date-format="dd.mm.yyyy" id = "date_start" name="date_start" onSelect={this.handleChange} placeholder="dd.mm.yyyy"/>
                                                     <span hidden={this.state.errdateStart} style={{color:"red"}}>This field is required</span>
                                                     <span hidden={this.state.errdate} style={{color:"red"}}>Date must be today or future</span>
                                                     
@@ -316,7 +328,7 @@ async  getautosuggest(input){
                                             <div className="col-xxs-12 col-xs-6 mt alternate">
                                                 <div className="input-field">
                                                     <label htmlFor="date-end">Check Out:</label>
-                                                    <input className="form-control datepicker" data-provide="datepicker" id = "date_end" data-date-format="dd.mm.yyyy" name="date_end"  onSelect={this.handleChange}  placeholder="dd.mm.yyyy"/>
+                                                    <input className="form-control datepicker" disabled= {this.state.disabled} data-provide="datepicker" id = "date_end" data-date-format="dd.mm.yyyy" name="date_end"  onSelect={this.handleChange}  placeholder="dd.mm.yyyy"/>
                                                     <span hidden={this.state.errDateEnd} style={{color:"red"}}>This field is required</span>
                                                     <span hidden={this.state.errdateE} style={{color:"red"}}>The date must be after the Check In date</span>
                                                     
@@ -324,8 +336,8 @@ async  getautosuggest(input){
                                             </div>
                                             <div className="col-xxs-12 col-xs-6 mt alternate">
                                                 <section>
-                                                    <label htmlFor="className">className:</label>
-                                                    <select className="cs-select cs-skin-border" name="flying_class" id="flying_class" value={this.state.flyingData.flying_class} onChange={this.handleChange} >
+                                                    <label htmlFor="className">class:</label>
+                                                    <select className="cs-select cs-skin-border" disabled= {this.state.disabled} name="flying_class" id="flying_class" value={this.state.flyingData.flying_class} onChange={this.handleChange} >
                                                     
                                                         <option value="economy">Economy</option>
                                                         <option value="first">First</option>
@@ -336,7 +348,7 @@ async  getautosuggest(input){
                                             <div className="col-xxs-12 col-xs-6 mt">
                                                 <section>
                                                     <label htmlFor="className">Adult:</label>
-                                                    <select className="cs-select cs-skin-border" name="adults" id="adults" value={this.state.flyingData.adults} onChange={this.handleChange} >
+                                                    <select className="cs-select cs-skin-border" disabled= {this.state.disabled} name="adults" id="adults" value={this.state.flyingData.adults} onChange={this.handleChange} >
                                                         
                                                         <option value="1">1</option>
                                                         <option value="2">2</option>
@@ -348,7 +360,7 @@ async  getautosuggest(input){
                                             <div className="col-xxs-12 col-xs-6 mt">
                                                 <section>
                                                     <label htmlFor="className">Children:</label>
-                                                    <select className="cs-select cs-skin-border" id="children" name="children" value={this.state.flyingData.children} onChange={this.handleChange} >
+                                                    <select className="cs-select cs-skin-border" disabled id="children" name="children" value={this.state.flyingData.children} onChange={this.handleChange} >
                                                         <option value="0">0</option>
                                                         <option value="1">1</option>
                                                         <option value="2">2</option>
@@ -357,8 +369,18 @@ async  getautosuggest(input){
                                                     </select>
                                                 </section>
                                             </div>
+					   <div className="col-xxs-12 col-xs-6 mt">
+						<section>
+                                                    <label htmlFor="className">Currency:</label>
+                                                    <select className="cs-select cs-skin-border" disabled id="currency" name="currency" value={this.state.flyingData.currency} onChange={this.handleChange} >
+                                                        <option value="EUR">EUR</option>
+                                                        <option value="USD">USD</option>
+                                                        <option value="GBP">GBP</option>
+                                                    </select>
+                                                </section>
+                                            </div>
                                             <div className="col-xs-12">
-                                                <input type="submit" className="btn btn-primary btn-block" value="Search Flight" />
+                                                <input type="submit" className="btn btn-primary btn-block" disabled= {this.state.disabled} value="Search Flight" />
                                             </div>
                                         </div>
                                       </div>

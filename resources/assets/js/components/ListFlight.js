@@ -38,28 +38,47 @@ class ListFlight extends Component {
       flyingData: {},
       flights: this.props.flights,
       list: [],
-      value: { min: 0, max: 23 },
+      valueOutBound: { min: 0, max: 23 },
+      valueOnReturn: { min: 0, max: 23 },
+      valueD: 1800,
       sortedValue: '',
       timeArr:null,
       timeLan:null,
       sortedList:[],
+      showData: true,
       stops:{
         onestop: 'checked',
         nonstop: 'checked',
         twoplus: 'checked'
-      }
+      },
+      outboundDepartStartTime: '00:00',
+      outboundDepartEndTime: '23:59',
+      inboundDepartStartTime: '00:00',
+      inboundDepartEndTime: '23:59',
+      currencysign:'$'
     }
 }
 
  componentWillMount(){
   this.setState({flights:this.props.flights})
   this.setState({flyingData: this.props.query})
+	if(this.props.query.currency == 'GBP'){
+		this.setState({currencysign: '£'})	
+	} 
+	else if(this.props.query.currency == 'USD'){
+		this.setState({currencysign: '$'})	
+	}
+	else {
+		this.setState({currencysign: '€'})
+	}
   var flightArr = []
   this.state.flights.map(f => {
       var list = {}
       
       list.price = f.Agent.Price;
       list.img = f.OutboundLeg.FlightNumbers[0].Carrier.ImageUrl;
+      list.iimg = f.OutboundLeg.FlightNumbers[0].Carrier.ImageUrl;
+
       list.odeparture = f.OutboundLeg.Departure.split('T')[1];
       list.od = f.OutboundLeg.Duration;
       list.oarrival = f.OutboundLeg.Arrival.split('T')[1];
@@ -103,6 +122,7 @@ class ListFlight extends Component {
       
       list.price = f.Agent.Price;
       list.img = f.OutboundLeg.FlightNumbers[0].Carrier.ImageUrl;
+      list.iimg = f.InboundLeg.FlightNumbers[0].Carrier.ImageUrl;
       list.odeparture = f.OutboundLeg.Departure.split('T')[1];
       list.od = f.OutboundLeg.Duration;
       list.oarrival = f.OutboundLeg.Arrival.split('T')[1];
@@ -203,8 +223,11 @@ async changeStop(val){
                   if(this.state.stops.nonstop == 'checked'){
                   flyingData.stops = 0;
                   }
-                  else {
+                  else if(this.state.stops.twoplus == 'checked'){
                     flyingData.stops = '';
+                  }
+		 else{
+                    flyingData.stops = null;
                   }
         }
         else{
@@ -232,9 +255,12 @@ async changeStop(val){
             if(this.state.stops.onestop == 'checked'){
             flyingData.stops = 1;
             }
-            else {
-              flyingData.stops = '';
-            }
+            else if(this.state.stops.twoplus == 'checked'){
+                    flyingData.stops = '';
+                  }
+		 else{
+                    flyingData.stops = null;
+                  }
         }
         else  {
                var stops = {...this.state.stops};
@@ -261,11 +287,21 @@ if(this.state.stops.twoplus == 'checked'){
           var stops = {...this.state.stops};
           stops.twoplus = ''
         this.setState({stops: stops})
+	if(this.state.stops.onestop == 'checked'){
+                    flyingData.stops = 1;
+                  }
+		 else if(this.state.stops.onestop == 'checked'){
+                    flyingData.stops = 0;
+                  }
+		else{
+                    flyingData.stops = null;
+                  }
       }
       else{
         var stops = {...this.state.stops};
           stops.twoplus = 'checked'
         this.setState({stops: stops}) 
+	
       }
   }
  
@@ -275,15 +311,96 @@ if(this.state.stops.twoplus == 'checked'){
     console.log("flying data",flyingData)
    var data = await axios.post('/api/flightSearch',query) 
    console.log(data) 
+   if(typeof(data) != 'string'){ 
   this.props.createFlight(data.data);
   this.setState({modalIsOpen: false});
+}
+else{
+this.setState({modalIsOpen: false, showData: false});
+  console.log("not found")
+}
 }
    isSortBy(li,value){
           return li.sort((a,b) =>{
             return a.price- b.price
           })
       }
+async onreturn(val){
+  
+  console.log(val)
+  var flyingData = this.state.flyingData;
+  if(val.min != 0)
+    flyingData.inboundDepartStartTime = parseInt(val.min) + ':' + ((val.min%parseInt(val.min))*60);
+  else
+    flyingData.inboundDepartStartTime = "00:00"
+  flyingData.inboundDepartEndTime = parseInt(val.max) + ':' + ((val.max%parseInt(val.max))*60);
+  this.setState({flyingData:flyingData})
+  this.setState({ valueOnReturn:val, inboundDepartStartTime: flyingData.inboundDepartStartTime,
+    inboundDepartEndTime: flyingData.inboundDepartEndTime})
+  this.setState({modalIsOpen: true});
+    
+  var query = querystring.stringify(flyingData)
+    console.log("flying data",flyingData)
+   var data = await axios.post('/api/flightSearch',query) 
+   console.log(data) 
+  if(typeof(data) != 'string'){ 
+  this.props.createFlight(data.data);
+  this.setState({modalIsOpen: false});
+}
+else{
+this.setState({modalIsOpen: false, showData: false});
+  console.log("not found")
+}
+}
+async outbound(val){
+  
+  console.log(val)
+  var flyingData = this.state.flyingData;
+  if(val.min != 0)
+    flyingData.outboundDepartStartTime = parseInt(val.min) + ':' + ((val.min%parseInt(val.min))*60);
+  else 
+    flyingData.outboundDepartStartTime = "00:00"
+  flyingData.outboundDepartEndTime = parseInt(val.max) + ':' + ((val.max%parseInt(val.max))*60);
+  this.setState({flyingData:flyingData,
+                outboundDepartEndTime: flyingData.outboundDepartEndTime,
+                outboundDepartStartTime: flyingData.outboundDepartStartTime})
+  this.setState({ valueOutBound:val})
+  this.setState({modalIsOpen: true});
+    
+  var query = querystring.stringify(flyingData)
+    console.log("flying data",flyingData)
+   var data = await axios.post('/api/flightSearch',query) 
+   console.log(data) 
+   if(typeof(data) != 'string'){ 
+  this.props.createFlight(data.data);
+  this.setState({modalIsOpen: false});
+}
+else{
+this.setState({modalIsOpen: false, showData: false});
+  console.log("not found")
+}
 
+}
+async journeytime(val){
+  console.log(val)
+  var flyingData = this.state.flyingData;
+  flyingData.duration = val
+  this.setState({ valueD:val,flyingData:flyingData})
+  this.setState({modalIsOpen: true});
+    
+  var query = querystring.stringify(flyingData)
+    console.log("flying data",flyingData)
+   var data = await axios.post('/api/flightSearch',query) 
+   console.log(data)
+   if(typeof(data) != 'string'){ 
+  this.props.createFlight(data.data);
+  this.setState({modalIsOpen: false});
+}
+else{
+this.setState({modalIsOpen: false, showData: false});
+  console.log("not found")
+}
+}
     render() {
       const options = [{"value": "cheapest","label":"Cheapest"},
       {"value": "highest","label":"Highest price"},
@@ -315,13 +432,13 @@ if(this.state.stops.twoplus == 'checked'){
           
 
 
-          {this.state.list.map((r,i)=>
+          {this.state.showData? this.state.list.map((r,i)=>
           <div className="row" style={{marginTop: 20,marginRight: 0,margiButtom: 20, marginLeft: 0}}>
       <div className="col-md-10">
       <div className="card">
           <div className="card-header">
             <strong>{r.name}</strong>
-             <strong className="float-right" style={{fontSize: 24,float: 'right'}}>{r.price}€</strong>
+             <strong className="float-right" style={{fontSize: 24,float: 'right'}}>{r.price}{this.state.currencysign}</strong>
           </div>
 
         <div className="card-body">
@@ -339,7 +456,7 @@ if(this.state.stops.twoplus == 'checked'){
         </div>
           <div className="row">
           <div className="col-md-4">
-            <h5 className="card-title"><img src={r.img} /></h5>
+            <h5 className="card-title"><img src={r.iimg} /></h5>
           </div>
           <div className="col-md-4">
              <p><strong>{r.departure} - {r.arrival}</strong></p>
@@ -357,7 +474,7 @@ if(this.state.stops.twoplus == 'checked'){
     </div>
 
   </div>
-  )}
+  ): <h2>No Flights found with those value</h2>}
           </div>
           </div>
           <div className="col-md-3">Sort
@@ -369,13 +486,44 @@ if(this.state.stops.twoplus == 'checked'){
         onChange={this._onSelect.bind(this)}
         
     />
-      {/*  <div>
+    <div>
+    <h3>Departure Times</h3>
+    <h4>Outbound</h4>
+    <h5>{this.state.outboundDepartStartTime} - {this.state.outboundDepartEndTime}</h5>
+    <InputRange
+        maxValue={24}
+        minValue={0}
+        step={0.25}
+        value={this.state.valueOutBound}
+	onChange={value => this.setState({ valueOutBound:value })}
+        onChangeComplete={this.outbound.bind(this)} />
+    <h4>return</h4>
+    <h5>{this.state.inboundDepartStartTime} - {this.state.inboundDepartEndTime}</h5>
+    <InputRange
+        maxValue={24}
+        minValue={0}
+        step={0.25}
+        value={this.state.valueOnReturn}
+	onChange={value => this.setState({ valueOnReturn:value })}
+        onChangeComplete={this.onreturn.bind(this)} />
+    </div>
+    <div>
+    <h3>Journey Time</h3>
+    <InputRange
+        maxValue={1800}
+        minValue={0}
+        step={100}
+        value={this.state.valueD}
+	onChange={value => this.setState({ valueD:value })}
+        onChangeComplete={this.journeytime.bind(this)} />
+    </div>
+        <div>
           <h3>Stops</h3>
-          <input type="checkbox" name="nonstop" checked={this.state.stops.nonstop} onChange ={this.changeStop.bind(this,'non')} value="0"/>Non-stop Flights <br />
+          <input type="checkbox" name="nonstop" checked={this.state.stops.nonstop} onChange ={this.changeStop.bind(this,'non')} value="0"/>Direct Flight <br />
           <input type="checkbox" name="onestop" checked={this.state.stops.onestop} onChange ={this.changeStop.bind(this,'one')} value="1"/> One Stop <br />
           <input type="checkbox" name="twoplus" checked={this.state.stops.twoplus} onChange ={this.changeStop.bind(this,'two')} value="2"/> More than 1 Stops
 
-        </div> */}
+        </div> 
         {pop}
 
 </div>

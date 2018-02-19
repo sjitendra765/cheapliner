@@ -29,12 +29,16 @@ class SearchController extends Controller
     
         $adults = $request['adults'];
         $children = $request['children'];
+	$currency = $request['currency'];
         $flying_class = $request['flying_class'];
         $input['to_place']  = $request['to_place'];
         $input['date_start']  = $request['date_start'];
         $input['adults']  = $request['adults'];
         $input['date_end']  = $request['date_end'];
         $input['children']  = $request['children'];
+	$input['currency']  = $request['currency'];
+
+
         
         if(!empty($request['sorttype'])){
             $input['sorttype']  = $request['sorttype'];
@@ -44,15 +48,47 @@ class SearchController extends Controller
             $input['sorttype']  = 'price';
            $input['sortorder']  = 'asc';
         }
+        
         if(!empty($request['stops'])){
         $input['stops']  = $request['stops'];
         }
         else{
             $input['stops'] ='';
         }
+         if(!empty($request['duration'])){
+        $input['duration']  = $request['duration'];
+        }
+        else{
+            $input['duration'] =1800;
+        }
+        if(!empty($request['outboundDepartStartTime'])){
+        $input['outboundDepartStartTime']  = $request['outboundDepartStartTime'];
+        }
+        else{
+            $input['outboundDepartStartTime'] ='00:00';
+        }
+
+        if(!empty($request['inboundDepartStartTime'])){
+        $input['inboundDepartStartTime']  = $request['inboundDepartStartTime'];
+        }
+        else{
+            $input['inboundDepartStartTime'] ='00:00';
+        }
+        if(!empty($request['inboundDepartEndTime'])){
+        $input['inboundDepartEndTime']  = $request['inboundDepartEndTime'];
+        }
+        else{
+            $input['inboundDepartEndTime'] ='23:59';
+        }
+        if(!empty($request['outboundDepartEndTime'])){
+        $input['outboundDepartEndTime']  = $request['outboundDepartEndTime'];
+        }
+        else{
+            $input['outboundDepartEndTime'] ='23:59';
+        }
        
         $pricing = new LivePrice($this->apiKey);
-        $pricing->setParameters(['country' => 'UK','currency' => 'EUR','locale' => 'en-GB','originplace' => $from_place,'destinationplace' => $to_place,'outbounddate' => $date_start,'inbounddate' => $date_end,'adults' => $adults,'children' => $children,'infants' => '0', 'pagesize' => 70, 'pageindex' =>0 ,'sorttype' => $input['sorttype'], 'sortorder' => $input['sortorder'],'stops'=>$input['stops']
+        $pricing->setParameters(['country' => 'UK','currency' => $currency ,'locale' => 'en-GB','originplace' => $from_place,'destinationplace' => $to_place,'outbounddate' => $date_start,'inbounddate' => $date_end,'adults' => $adults,'children' => $children,'infants' => '0', 'pagesize' => 10, 'pageindex' =>0 ,'sorttype' => $input['sorttype'], 'sortorder' => $input['sortorder'],'stops'=>$input['stops'], 'inbounddepartstarttime' => $input['inboundDepartStartTime'], 'inbounddepartendtime' => $input['inboundDepartEndTime'], 'outbounddepartstarttime' => $input['outboundDepartStartTime'], 'outbounddepartendtime' => $input['outboundDepartEndTime'], 'duration' => $input['duration']
             ]);
         
         info('Hi');

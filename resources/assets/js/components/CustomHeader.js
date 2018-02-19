@@ -13,11 +13,11 @@ class CustomHeader extends Component {
                 	 <nav id="fh5co-menu-wrap" role="navigation">
                         <ul className="sf-menu" id="fh5co-primary-menu">
                             <li>
-                                <a href="vacation.html" className="fh5co-sub-ddown">Currency</a>
+                                <a href="vacation.html" className="fh5co-sub-down">Currency</a>
                                 <ul className="fh5co-sub-menu">
-                                    <li><a href="#">Family</a></li>
-                                    <li><a href="#">CSS3 &amp; HTML5</a></li>
-                                    <li><a href="#">Angular JS</a></li>
+                                    <li><a href="#">USD</a></li>
+                                    <li><a href="#">EUR</a></li>
+                                    <li><a href="#">GBP</a></li>
                                     <li><a href="#">Node JS</a></li>
                                     <li><a href="#">Django &amp; Python</a></li>
                                 </ul>
