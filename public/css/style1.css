@@ -18,8 +18,10 @@ body {
   background: #fff;
   color: #848484;
   font-weight: 300;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
 }
+
 body.fh5co-offcanvas {
   overflow: hidden;
 }
@@ -1979,10 +1981,66 @@ div.cs-select span {
 .Select-menu-outer{
   background-color: #fff !important ;
   color: #ccc;
-  z-index: 99999;
-}
-div.cs-select {
-  z-index:0 !important;
+  z-index: 20 !important;
 }
 
+
 /*# sourceMappingURL=style.css.map */
+
+header#fh5co-header-section {
+    z-index: 0;
+}
+div.cs-select{
+  z-index:2;
+}
+.Select-option {
+  padding:20px;
+  line-height:200px !important;
+}
+
+.modifier
+{
+  background: :blue !important;
+}
+
+.right-wrapper .right-item-block{
+  padding:5px 10px;
+  margin:5px auto;
+
+}
+.input-range__track--active{
+  background: #F78536 !important;
+}
+.input-range__slider{
+  background: #F78536 !important;
+  border: 1px solid #F78536 !important;
+}
+div.cs-select {
+     z-index: 3 !important ;
+}
+.right-wrapper .right-item-block h3{
+  font-size:20px;
+  color:#F78536;
+  
+}
+header#fh5co-header-section{
+  z-index: 1 !important;
+}
+.right-wrapper .right-item-block h4{
+  font-size:18px;
+   color:#F78536;
+}
+.row-data{
+  margin-bottom: 5px;
+}
+.loadmore {
+    color: #F78536;
+    text-align: center;
+    margin: 5px 38%;
+}
+.right-wrapper .right-item-block h5{
+  font-size:16px;
+ 
+  
+}
+.fh5co-cover, .fh5co-hero{ height:auto !important; }

@@ -20,19 +20,27 @@ class SearchController extends Controller
     public function flightSearch(Request $request)
     {
         
+		if(!empty($request['stops'])){
+        $stops  = $request['stops'];		
+		return $this->getFilterItineraries($stops);
+        }
+        else{
+            $input['stops'] ='';
+        }
+		
+		
         $from_place = $request['from_place'];
         $data = $request->only(['from_place']);
         $to_place = $request['to_place'];
         $date_start = $this->convertDate($request['date_start']);
         
         $date_end = $this->convertDate($request['date_end']);
-    
+        $pagesize = $request['pagesize'];
+        $pageindex = $request['pageindex'];
         $adults = $request['adults'];
         $children = $request['children'];
 	$currency = $request['currency'];
         $flying_class = $request['flying_class'];
-        $pagesize = $request['pagesize'];
-        $pageindex = $request['pageindex'];
         $input['to_place']  = $request['to_place'];
         $input['date_start']  = $request['date_start'];
         $input['adults']  = $request['adults'];
@@ -40,7 +48,8 @@ class SearchController extends Controller
         $input['children']  = $request['children'];
 	$input['currency']  = $request['currency'];
 
-
+    $temp = array();
+       
         
         if(!empty($request['sorttype'])){
             $input['sorttype']  = $request['sorttype'];
@@ -51,18 +60,8 @@ class SearchController extends Controller
            $input['sortorder']  = 'asc';
         }
         
-        if(!empty($request['stops'])){
-        $input['stops']  = $request['stops'];
-        }
-        else{
-            $input['stops'] ='';
-        }
-         if(!empty($request['duration'])){
-        $input['duration']  = $request['duration'];
-        }
-        else{
-            $input['duration'] =1800;
-        }
+        
+         
         if(!empty($request['outboundDepartStartTime'])){
         $input['outboundDepartStartTime']  = $request['outboundDepartStartTime'];
         }
@@ -88,13 +87,24 @@ class SearchController extends Controller
         else{
             $input['outboundDepartEndTime'] ='23:59';
         }
+         $temp =['country' => 'UK','currency' => $currency ,'locale' => 'en-GB','originplace' => $from_place,'destinationplace' => $to_place,'outbounddate' => $date_start,'inbounddate' => $date_end,'adults' => $adults,'children' => $children,'infants' => '0', 'pagesize' => $pagesize, 'pageindex' =>$pageindex ,'sorttype' => $input['sorttype'], 'sortorder' => $input['sortorder'],'stops'=>$input['stops'], 'inbounddepartstarttime' => $input['inboundDepartStartTime'], 'inbounddepartendtime' => $input['inboundDepartEndTime'], 'outbounddepartstarttime' => $input['outboundDepartStartTime'], 'outbounddepartendtime' => $input['outboundDepartEndTime']
+            ];
+        if(!empty($request['duration'])){
+        $input['duration']  = $request['duration'];
+        $temp['duration'] = $input['duration'];
+
+        }
+        
        
         $pricing = new LivePrice($this->apiKey);
-        $pricing->setParameters(['country' => 'UK','currency' => $currency ,'locale' => 'en-GB','originplace' => $from_place,'destinationplace' => $to_place,'outbounddate' => $date_start,'inbounddate' => $date_end,'adults' => $adults,'children' => $children,'infants' => '0', 'pagesize' => $pagesize, 'pageindex' => $pageindex ,'sorttype' => $input['sorttype'], 'sortorder' => $input['sortorder'],'stops'=>$input['stops'], 'inbounddepartstarttime' => $input['inboundDepartStartTime'], 'inbounddepartendtime' => $input['inboundDepartEndTime'], 'outbounddepartstarttime' => $input['outboundDepartStartTime'], 'outbounddepartendtime' => $input['outboundDepartEndTime'], 'duration' => $input['duration']
-            ]);
+        
+        $pricing->setParameters($temp);
         
         info('Hi');
-        $data = $pricing->get();
+       $data = $pricing->get();
+       
+        
+  
         
         while($pricing->getResponseStatus() == 304){
             info('I am sleeping.');
@@ -102,7 +112,7 @@ class SearchController extends Controller
             $data = $pricing->get();
             info('I am awake.');
         }
-        
+   
         info("Data Status: ".$pricing->getResponseStatus());
         // info('Data: '. $data->Itineraries);
         // $status = $pricing->getResponseStatus();
@@ -116,6 +126,34 @@ class SearchController extends Controller
         
         return $flights;
     }
+	
+	public function getFilterItineraries($data){
+		$pricing = new LivePrice($this->apiKey);
+        $temp['stops'] = $data;
+        $pricing->setParameters($temp);
+		$data = $pricing->get();
+		
+		while($pricing->getResponseStatus() == 304){
+            info('I am sleeping.');
+            sleep(4);
+            $data = $pricing->get();
+            info('I am awake.');
+        }
+   
+        info("Data Status: ".$pricing->getResponseStatus());
+        // info('Data: '. $data->Itineraries);
+        // $status = $pricing->getResponseStatus();
+  
+        $flights  = $pricing->getFlights();
+        
+        info("Flight Status: ".$pricing->getResponseStatus());
+        // info('flights: '. $flights);
+        
+        // $status = $pricing->getResponseStatus();
+        
+        return $flights;
+		
+	}
 
     public function autoSuggest($data){
         

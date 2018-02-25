@@ -50,7 +50,9 @@ class TabPanes extends Component {
                     inboundDepartStartTime:'00:00',
                     outboundDepartEndTime:'23:59',
                     outboundDepartStartTime:'00:00',
-                    duration: 1800,
+                    duration: '',
+                    pageindex: 0,
+                    pagesize: 10,
 		    currency: 'EUR'
                 },
                 options:[],
@@ -162,20 +164,13 @@ class TabPanes extends Component {
  async handleSubmit(event) {
    event.preventDefault(); 
     //alert('Your favorite flavor is: ' + this.state);
-    var date_start = document.getElementById("date_start").value
-    var date_end = document.getElementById("date_end").value;
-    var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
-    var date_start = new Date(date_start.replace(pattern,'$3-$2-$1'));
-    var date_end = new Date(date_end.replace(pattern,'$3-$2-$1'));
-
-    console.log("sfsdfxbfxb",this.state.flyingData.from_place)
-    console.log("new data",document.getElementsByName('from_place')[0].value)
+    
     var checked = false
-    if (document.getElementsByName('from_place')[0].value == ''){
+    if (this.state.flyingData.from_place == ''){
         this.setState({ errFrom : ''})
         checked = true
     }
-    if (document.getElementsByName('to_place')[0].value == ''){
+    if (this.state.flyingData.to_place == ''){
         console.log(this.state.errFrom)
         this.setState({ errTo : ''})
         checked = true
@@ -214,6 +209,14 @@ class TabPanes extends Component {
     //    this.setState({modalIsOpen:true})
     //    return;
     //}
+    var date_start = document.getElementById("date_start").value
+    var date_end = document.getElementById("date_end").value;
+    var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
+    var date_start = new Date(date_start.replace(pattern,'$3-$2-$1'));
+    var date_end = new Date(date_end.replace(pattern,'$3-$2-$1'));
+
+    console.log("sfsdfxbfxb",this.state.flyingData.from_place)
+    console.log("new data",document.getElementsByName('from_place')[0].value)
     var from_place = document.getElementsByName('from_place')[0].value;
     var to_place = document.getElementsByName('to_place')[0].value; 
     var date_start = document.getElementById("date_start").value
@@ -238,6 +241,8 @@ class TabPanes extends Component {
     flyingData.date_end = date_end;
     flyingData.sorttype = 'price';
     flyingData.sortorder = 'asc';
+    flyingData.pagesize = 10;
+    flyingData.pageindex =0;
     console.log("sfdfd")
     console.log("the data to send",flyingData)
     this.setState({
@@ -247,7 +252,7 @@ class TabPanes extends Component {
     //flyingData.stops = null;
     var query = querystring.stringify(flyingData)
     console.log("final query", query)
-    this.setState({modalIsOpen: true, disabled: "disabled"});
+    this.setState({modalIsOpen: true});
    var data = await axios.post('/api/flightSearch',query)
 
 
@@ -290,7 +295,9 @@ class TabPanes extends Component {
         id="from_place"
         value={this.state.flyingData.from_place}
         options={options}
-        disabled= {this.state.disabled}
+        optionHeight= {50}
+        maxHeight={300}
+        className="modifier"
         selectComponent={Creatable}
         onInputChange={this.getautosuggest.bind(this)}
         onChange={val => {var flyingData={...this.state.flyingData};flyingData.from_place=val;this.setState({flyingData: flyingData,errFrom: "hidden"})}}
@@ -307,7 +314,8 @@ class TabPanes extends Component {
         id="to_place"
         value={this.state.flyingData.to_place}
         options={options2}
-        disabled= {this.state.disabled}
+        optionHeight= {50}
+        maxHeight={300}
         selectComponent={Creatable}
         onChange={val => {var flyingData={...this.state.flyingData};flyingData.to_place=val;this.setState({flyingData:flyingData,errTo: "hidden",sameair:"hidden"})}}
         onInputChange={this.getautosuggest2.bind(this)}

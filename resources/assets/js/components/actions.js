@@ -7,6 +7,17 @@ export const createFlight = (flight) => {
     flight: flight
   }
 };
+
+export const addFlight = (flight) => {
+  // Return action
+  return {
+    // Unique identifier
+    type: 'ADD_LIST',
+    // Payload flight info
+    flight: flight
+  }
+};
+
 export const queryList = (query) => {
   // Return action
   return {
