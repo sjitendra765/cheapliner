@@ -41,7 +41,7 @@ class TabPanes extends Component {
                   to_place:'',
                   date_start:'',
                     date_end: '',
-                    flying_class:'',
+                    flying_className:'',
                     adults: '',
                     children: '0',
                     sorttype:'price',
@@ -221,7 +221,7 @@ class TabPanes extends Component {
     var to_place = document.getElementsByName('to_place')[0].value; 
     var date_start = document.getElementById("date_start").value
     var date_end = document.getElementById("date_end").value;   
-    var flyingclass = document.getElementById("flying_class").value
+    var flyingclassName = document.getElementById("flying_className").value
     var adults = document.getElementById("adults").value
     var children = document.getElementById("children").value
     var currency = document.getElementById("currency").value
@@ -233,7 +233,7 @@ class TabPanes extends Component {
     var flyingData = {};
     flyingData.from_place=from_place;
     flyingData.to_place = to_place;
-    flyingData.flying_class = flyingclass;
+    flyingData.flying_className = flyingclassName;
     flyingData.adults = adults;
     flyingData.children = children;
     flyingData.currency = currency;
@@ -282,120 +282,70 @@ class TabPanes extends Component {
         </Modal>);
       
         return (
-            <div className="tab-content">
-            <form className="form-horizontal" role="form" onSubmit={this.handleSubmit}>
-                                    
-                                     <div role="tabpanel" className="tab-pane active" id="flights">
-                                        <div className="row">
-                                            <div className="col-xxs-12 col-xs-6 mt">
-                                                <div className="input-field">
-                                                    <label htmlFor="from">From:</label>
-                                                    <Select
-        name="from_place"
-        id="from_place"
-        value={this.state.flyingData.from_place}
-        options={options}
-        optionHeight= {50}
-        maxHeight={300}
-        className="modifier"
-        selectComponent={Creatable}
-        onInputChange={this.getautosuggest.bind(this)}
-        onChange={val => {var flyingData={...this.state.flyingData};flyingData.from_place=val;this.setState({flyingData: flyingData,errFrom: "hidden"})}}
-        
-        
-    /><span hidden={this.state.errFrom} style={{color:"red"}}>This field is required</span>
-                                                </div>
-                                            </div>
-                                            <div className="col-xxs-12 col-xs-6 mt">
-                                                <div className="input-field">
-                                                    <label htmlFor="from">To:</label>
-                                                    <Select
-        name="to_place"
-        id="to_place"
-        value={this.state.flyingData.to_place}
-        options={options2}
-        optionHeight= {50}
-        maxHeight={300}
-        selectComponent={Creatable}
-        onChange={val => {var flyingData={...this.state.flyingData};flyingData.to_place=val;this.setState({flyingData:flyingData,errTo: "hidden",sameair:"hidden"})}}
-        onInputChange={this.getautosuggest2.bind(this)}
-        
-    /><span hidden={this.state.errTo} style={{color:"red"}}>This field is required</span>
-    <span hidden={this.state.sameair} style={{color:"red"}}>The ariport should not be same</span>
-                                                </div>
-                                            </div>
-                                            <div className="col-xxs-12 col-xs-6 mt alternate">
-                                                <div className="input-field">
-                                                    <label htmlFor="date-start">Check In:</label>
-                                                    <input className="form-control datepicker" disabled= {this.state.disabled} data-provide="datepicker" data-date-format="dd.mm.yyyy" id = "date_start" name="date_start" onSelect={this.handleChange} placeholder="dd.mm.yyyy"/>
-                                                    <span hidden={this.state.errdateStart} style={{color:"red"}}>This field is required</span>
-                                                    <span hidden={this.state.errdate} style={{color:"red"}}>Date must be today or future</span>
-                                                    
-                                                </div>
-                                            </div>
-                                            <div className="col-xxs-12 col-xs-6 mt alternate">
-                                                <div className="input-field">
-                                                    <label htmlFor="date-end">Check Out:</label>
-                                                    <input className="form-control datepicker" disabled= {this.state.disabled} data-provide="datepicker" id = "date_end" data-date-format="dd.mm.yyyy" name="date_end"  onSelect={this.handleChange}  placeholder="dd.mm.yyyy"/>
-                                                    <span hidden={this.state.errDateEnd} style={{color:"red"}}>This field is required</span>
-                                                    <span hidden={this.state.errdateE} style={{color:"red"}}>The date must be after the Check In date</span>
-                                                    
-                                                </div>
-                                            </div>
-                                            <div className="col-xxs-12 col-xs-6 mt alternate">
-                                                <section>
-                                                    <label htmlFor="className">class:</label>
-                                                    <select className="cs-select cs-skin-border" disabled= {this.state.disabled} name="flying_class" id="flying_class" value={this.state.flyingData.flying_class} onChange={this.handleChange} >
-                                                    
-                                                        <option value="economy">Economy</option>
-                                                        <option value="first">First</option>
-                                                        <option value="business">Business</option>
-                                                    </select>
-                                                </section>
-                                            </div>
-                                            <div className="col-xxs-12 col-xs-6 mt">
-                                                <section>
-                                                    <label htmlFor="className">Adult:</label>
-                                                    <select className="cs-select cs-skin-border" disabled= {this.state.disabled} name="adults" id="adults" value={this.state.flyingData.adults} onChange={this.handleChange} >
-                                                        
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                    </select>
-                                                </section>
-                                            </div>
-                                            <div className="col-xxs-12 col-xs-6 mt">
-                                                <section>
-                                                    <label htmlFor="className">Children:</label>
-                                                    <select className="cs-select cs-skin-border" disabled id="children" name="children" value={this.state.flyingData.children} onChange={this.handleChange} >
-                                                        <option value="0">0</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                    </select>
-                                                </section>
-                                            </div>
-					   <div className="col-xxs-12 col-xs-6 mt">
-						<section>
-                                                    <label htmlFor="className">Currency:</label>
-                                                    <select className="cs-select cs-skin-border" disabled id="currency" name="currency" value={this.state.flyingData.currency} onChange={this.handleChange} >
-                                                        <option value="EUR">EUR</option>
-                                                        <option value="USD">USD</option>
-                                                        <option value="GBP">GBP</option>
-                                                    </select>
-                                                </section>
-                                            </div>
-                                            <div className="col-xs-12">
-                                                <input type="submit" className="btn btn-primary btn-block" disabled= {this.state.disabled} value="Search Flight" />
-                                            </div>
+            <div role="tabpanel" className="tab-pane active" id="flight">
+                                <form onSubmit={this.handleSubmit}>
+                                    <div className="col-md-12 product-search-title">Book Flight Tickets</div>
+                                    <div className="col-md-12 search-col-padding">
+                                        <label className="radio-inline">
+                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="One Way"> One Way
+                                        </label>
+                                        <label className="radio-inline">
+                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Round Trip"> Round Trip
+                                        </label>
+                                    </div>
+                                    <div className="clearfix"></div>
+                                    <div className="col-md-6 col-sm-6 search-col-padding">
+                                        <label>Leaving From</label>
+                                        <div className="input-group">
+                                            <input type="text" name="departure_city" className="form-control" required placeholder="E.g. London">
+                                            <span className="input-group-addon"><i className="fa fa-map-marker fa-fw"></i></span>
                                         </div>
-                                      </div>
-                                        </form>
-                                        {pop}
-                                        <button hidden="hidden"><Link to="/listflight" id="hidbut"  >demo</Link></button>
-            </div>
+                                    </div>
+                                    <div className="col-md-6 col-sm-6 search-col-padding">
+                                        <label>Leaving To</label>
+                                        <div className="input-group">
+                                            <input type="text" name="destination_city" className="form-control" required placeholder="E.g. New York">
+                                            <span className="input-group-addon"><i className="fa fa-map-marker fa-fw"></i></span>
+                                        </div>
+                                    </div>
+                                    <div className="clearfix"></div>
+                                    <div className="col-md-6 col-sm-6 search-col-padding">
+                                        <label>Departure</label>
+                                        <div className="input-group">
+                                            <input type="text" id="departure_date" name="departure_date" onSelect={this.handleChange} className="form-control" placeholder="DD/MM/YYYY">
+                                            <span className="input-group-addon"><i className="fa fa-calendar fa-fw"></i></span>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 col-sm-6 search-col-padding">
+                                        <label>Return</label>
+                                        <div className="input-group">
+                                            <input type="text" id="return_date" className="form-control" onSelect={this.handleChange} name="return_date" placeholder="DD/MM/YYYY">
+                                            <span className="input-group-addon"><i className="fa fa-calendar fa-fw"></i></span>
+                                        </div>
+                                    </div>
+                                    <div className="clearfix"></div>
+                                    <div className="col-md-4 col-sm-4 search-col-padding">
+                                        <label>Adult</label><br>
+                                        <input id="adult_count" name="adult_count" value={this.state.flyingData.adults} onChange={this.handleChange} className="form-control quantity-padding">
+                                    </div>
+                                    <div className="col-md-4 col-sm-4 search-col-padding">
+                                        <label>Child</label><br>
+                                        <input type="text" id="child_count" name="child_count" value={this.state.flyingData.children} onChange={this.handleChange}className="form-control quantity-padding">
+                                    </div>
+                                    <div className="col-md-4 col-sm-4 search-col-padding">
+                                        <label>className</label><br>
+                                        <select className="selectpicker" value={this.state.flyingData.flying_class} onChange={this.handleChange} >
+                                            <option>Business</option>
+                                            <option>Economy</option>
+                                        </select>
+                                    </div>
+                                    <div className="clearfix"></div>
+                                    <div className="col-md-12 search-col-padding">
+                                        <button type="submit" className="search-button btn transition-effect">Search Flights</button>
+                                    </div>
+                                    <div className="clearfix"></div>
+                                </form>
+                            </div>
         );
     }
 }

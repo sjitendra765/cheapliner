@@ -365,7 +365,7 @@ this.setState({modalIsOpen: false, showData: false});
 
   
   ) 
-  : <h2>No Flights found with those value</h2>} <div class="col-md-12  row-data"><button className="btn btn-lg form-control loadmore" onClick={this.loadMore.bind(this)}>Load More</button></div></div>
+  : <h2>No Flights found with those value</h2>} <div class="col-md-12  row-data"><button className="btn btn-sm loadmore" onClick={this.loadMore.bind(this)}>Load More</button></div></div>
           
          
           <div className="col-md-3">
