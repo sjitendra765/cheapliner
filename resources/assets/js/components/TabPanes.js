@@ -12,6 +12,7 @@ import 'react-virtualized-select/styles.css'
 import Modal from 'react-modal';
 import { ClipLoader } from 'react-spinners';
 import * as actions from './actions'
+import Slider from './sections/Slider'
 import {
   BrowserRouter as Router,
   Route,
@@ -41,8 +42,8 @@ class TabPanes extends Component {
                   to_place:'',
                   date_start:'',
                     date_end: '',
-                    flying_className:'',
-                    adults: '',
+                    flying_class:'',
+                    adults: '1',
                     children: '0',
                     sorttype:'price',
                     sortorder:'asc',
@@ -53,6 +54,7 @@ class TabPanes extends Component {
                     duration: '',
                     pageindex: 0,
                     pagesize: 10,
+                    way:2,
 		    currency: 'EUR'
                 },
                 options:[],
@@ -142,12 +144,12 @@ class TabPanes extends Component {
     const target = event.target;
     const value =  target.value;
     const name = target.name;
-    if(name == 'date_start'){
+    if(name == 'departure_date'){
         this.setState({ errdateStart: "hidden"})
         this.setState({ errdate: "hidden"})
 
     }
-    if(name == 'date_end'){
+    if(name == 'return_date'){
         this.setState({errDateEnd: "hidden"})
         this.setState({ errdateE: "hidden"})
 
@@ -161,6 +163,15 @@ class TabPanes extends Component {
       flyingData
     });
   }
+    setTrip(val){
+       var flyingData = this.state.flyingData;
+       flyingData.way = val;
+       this.setState(
+           {
+               flyingData
+           }
+       )
+    }
  async handleSubmit(event) {
    event.preventDefault(); 
     //alert('Your favorite flavor is: ' + this.state);
@@ -176,15 +187,17 @@ class TabPanes extends Component {
         checked = true
         
     }
-    if (document.getElementById("date_start").value == ''){
+    if (document.getElementById("departure_date").value == ''){
         this.setState({ errdateStart : ''})
         checked = true
         
     }
-    if (document.getElementById("date_end").value == ''){
-        this.setState({ errDateEnd : ''})
-        checked = true
-        
+    if(this.state.flyingData.way==2) {
+        if (document.getElementById("return_date").value == '') {
+            this.setState({errDateEnd: ''})
+            checked = true
+
+        }
     }
     if (date_start < new Date() ){
         this.setState({ errdate : ''})
@@ -194,7 +207,7 @@ class TabPanes extends Component {
         this.setState({ errdateE : ''})
         checked = true
     }
-    if(document.getElementsByName('from_place')[0].value == document.getElementsByName('to_place')[0].value){
+    if(this.state.flyingData.from_place == this.state.flyingData.to_place){
         this.setState({sameair:''})
         checked=true
     }
@@ -209,9 +222,9 @@ class TabPanes extends Component {
     //    this.setState({modalIsOpen:true})
     //    return;
     //}
-    var date_start = document.getElementById("date_start").value
-    var date_end = document.getElementById("date_end").value;
-    var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
+        var date_start = document.getElementById("departure_date").value
+        var date_end = document.getElementById("return_date").value;
+        var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
     var date_start = new Date(date_start.replace(pattern,'$3-$2-$1'));
     var date_end = new Date(date_end.replace(pattern,'$3-$2-$1'));
 
@@ -219,12 +232,12 @@ class TabPanes extends Component {
     console.log("new data",document.getElementsByName('from_place')[0].value)
     var from_place = document.getElementsByName('from_place')[0].value;
     var to_place = document.getElementsByName('to_place')[0].value; 
-    var date_start = document.getElementById("date_start").value
-    var date_end = document.getElementById("date_end").value;   
-    var flyingclassName = document.getElementById("flying_className").value
-    var adults = document.getElementById("adults").value
-    var children = document.getElementById("children").value
-    var currency = document.getElementById("currency").value
+    var date_start = document.getElementById("departure_date").value
+    var date_end = document.getElementById("return_date").value;
+    var flyingclass = document.getElementById("flying_class").value
+    var adults = document.getElementById("adult_count").value
+    var children = document.getElementById("child_count").value
+  var currency = "EUR"
 
 
     console.log(typeof date_end+ "date")
@@ -233,7 +246,7 @@ class TabPanes extends Component {
     var flyingData = {};
     flyingData.from_place=from_place;
     flyingData.to_place = to_place;
-    flyingData.flying_className = flyingclassName;
+    flyingData.flying_class = flyingclass;
     flyingData.adults = adults;
     flyingData.children = children;
     flyingData.currency = currency;
@@ -282,70 +295,139 @@ class TabPanes extends Component {
         </Modal>);
       
         return (
+            <section>
+            <div className="row full-width-search">
+            <div className="container clear-padding">
+            <div className="col-md-8 search-section">
+            <div role="tabpanel">
+
+        <ul className="nav nav-tabs search-top" role="tablist" id="searchTab">
+            <li role="presentation" className="active text-center">
+            <a href="#flight" aria-controls="flight" role="tab" data-toggle="tab">
+            <i className="fa fa-plane"></i>
+            <span>FLIGHTS</span>
+            </a>
+            </li>
+            </ul>
+
+            <div className="tab-content">
+
             <div role="tabpanel" className="tab-pane active" id="flight">
-                                <form onSubmit={this.handleSubmit}>
-                                    <div className="col-md-12 product-search-title">Book Flight Tickets</div>
-                                    <div className="col-md-12 search-col-padding">
-                                        <label className="radio-inline">
-                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="One Way"> One Way
-                                        </label>
-                                        <label className="radio-inline">
-                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Round Trip"> Round Trip
-                                        </label>
-                                    </div>
-                                    <div className="clearfix"></div>
-                                    <div className="col-md-6 col-sm-6 search-col-padding">
-                                        <label>Leaving From</label>
-                                        <div className="input-group">
-                                            <input type="text" name="departure_city" className="form-control" required placeholder="E.g. London">
-                                            <span className="input-group-addon"><i className="fa fa-map-marker fa-fw"></i></span>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6 col-sm-6 search-col-padding">
-                                        <label>Leaving To</label>
-                                        <div className="input-group">
-                                            <input type="text" name="destination_city" className="form-control" required placeholder="E.g. New York">
-                                            <span className="input-group-addon"><i className="fa fa-map-marker fa-fw"></i></span>
-                                        </div>
-                                    </div>
-                                    <div className="clearfix"></div>
-                                    <div className="col-md-6 col-sm-6 search-col-padding">
-                                        <label>Departure</label>
-                                        <div className="input-group">
-                                            <input type="text" id="departure_date" name="departure_date" onSelect={this.handleChange} className="form-control" placeholder="DD/MM/YYYY">
-                                            <span className="input-group-addon"><i className="fa fa-calendar fa-fw"></i></span>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6 col-sm-6 search-col-padding">
-                                        <label>Return</label>
-                                        <div className="input-group">
-                                            <input type="text" id="return_date" className="form-control" onSelect={this.handleChange} name="return_date" placeholder="DD/MM/YYYY">
-                                            <span className="input-group-addon"><i className="fa fa-calendar fa-fw"></i></span>
-                                        </div>
-                                    </div>
-                                    <div className="clearfix"></div>
-                                    <div className="col-md-4 col-sm-4 search-col-padding">
-                                        <label>Adult</label><br>
-                                        <input id="adult_count" name="adult_count" value={this.state.flyingData.adults} onChange={this.handleChange} className="form-control quantity-padding">
-                                    </div>
-                                    <div className="col-md-4 col-sm-4 search-col-padding">
-                                        <label>Child</label><br>
-                                        <input type="text" id="child_count" name="child_count" value={this.state.flyingData.children} onChange={this.handleChange}className="form-control quantity-padding">
-                                    </div>
-                                    <div className="col-md-4 col-sm-4 search-col-padding">
-                                        <label>className</label><br>
-                                        <select className="selectpicker" value={this.state.flyingData.flying_class} onChange={this.handleChange} >
-                                            <option>Business</option>
-                                            <option>Economy</option>
-                                        </select>
-                                    </div>
-                                    <div className="clearfix"></div>
-                                    <div className="col-md-12 search-col-padding">
-                                        <button type="submit" className="search-button btn transition-effect">Search Flights</button>
-                                    </div>
-                                    <div className="clearfix"></div>
-                                </form>
-                            </div>
+            <form onSubmit={this.handleSubmit}>
+    <div className="col-md-12 product-search-title">Book Flight Tickets</div>
+        <div className="col-md-12 search-col-padding">
+            <label className="radio-inline">
+            <input type="radio" className="radio-event-hanlder" name="inlineRadioOptions" id="inlineRadio1" value="1" onChange={this.setTrip.bind(this,1)}/> One Way
+        </label>
+        <label className="radio-inline">
+            <input type="radio" className="radio-event-hanlder" name="inlineRadioOptions" id="inlineRadio2" value="2" onChange={this.setTrip.bind(this,2)} /> Round Trip
+        </label>
+        </div>
+        <div className="clearfix"></div>
+            <div className="col-md-6 col-sm-6 search-col-padding">
+            <label>Leaving From</label>
+        <div className="input-group">
+            <Select
+        name="from_place"
+        value={this.state.flyingData.from_place}
+        options={options}
+        selectComponent={Creatable}
+        onChange={val => {var flyingData={...this.state.flyingData};flyingData.from_place=val;this.setState({flyingData,errFrom: "hidden"})}}
+        onInputChange={this.getautosuggest.bind(this)}
+        arrowRender={null,null}
+
+
+
+
+
+        />
+
+            <span className="input-group-addon"><i className="fa fa-map-marker fa-fw"></i></span>
+
+
+        </div>
+        <span hidden={this.state.errFrom} style={{color:"red"}} className="col-md-12 col-sm-12">This field is required</span>
+        </div>
+        <div className="col-md-6 col-sm-6 search-col-padding">
+            <label>Leaving To</label>
+        <div className="input-group">
+
+            <Select
+        name="to_place"
+        value={this.state.flyingData.to_place}
+        options={options2}
+        selectComponent={Creatable}
+        onChange={val => {var flyingData={...this.state.flyingData};flyingData.to_place=val;this.setState({flyingData,errTo: "hidden",sameair:"hidden"})}}
+        onInputChange={this.getautosuggest2.bind(this)}
+
+
+        />
+            <span className="input-group-addon"><i className="fa fa-map-marker fa-fw"></i></span>
+
+        </div>
+
+        <span hidden={this.state.errTo} style={{color:"red"}} className="col-md-12 col-sm-12">This field is required</span>
+        <span hidden={this.state.sameair} style={{color:"red"}} className="col-md-12 col-sm-12">The ariport should not be same</span>
+        </div>
+        <div className="clearfix"></div>
+            <div className="col-md-6 col-sm-6 search-col-padding">
+            <label>Departure</label>
+            <div className="input-group">
+            <input type="text" id="departure_date" name="departure_date" onSelect={this.handleChange}  className="form-control" placeholder="DD/MM/YYYY"/>
+            <span className="input-group-addon"><i className="fa fa-calendar fa-fw"></i></span>
+
+        </div>
+
+        <span hidden={this.state.errdateStart} style={{color:"red"}} className="col-md-12 col-sm-12">This field is required</span>
+        <span hidden={this.state.errdate} style={{color:"red"}} className="col-md-12 col-sm-12">Date must be today or future</span>
+        </div>
+        <div className="col-md-6 col-sm-6 search-col-padding">
+            <label>Return</label>
+            <div className="input-group">
+            <input type="text" id="return_date" className="form-control" onSelect={this.handleChange} name="return_date" placeholder="DD/MM/YYYY" />
+            <span className="input-group-addon"><i className="fa fa-calendar fa-fw"></i></span>
+           </div>
+
+        <span hidden={this.state.errDateEnd} style={{color:"red"}} className="col-md-12 col-sm-12">This field is required</span>
+        <span hidden={this.state.errdateE} style={{color:"red"}} className="col-md-12 col-sm-12">The date must be after the Check In date</span>
+
+        </div>
+        <div className="clearfix"></div>
+            <div className="col-md-4 col-sm-4 search-col-padding">
+            <label>Adult</label><br />
+            <input id="adult_count" name="adult_count" value={this.state.flyingData.adults} onChange={this.handleChange} className="form-control quantity-padding" />
+            </div>
+            <div className="col-md-4 col-sm-4 search-col-padding">
+            <label>Child</label><br />
+            <input type="text" id="child_count" name="child_count" value={this.state.flyingData.children} onChange={this.handleChange}className="form-control quantity-padding" />
+            </div>
+            <div className="col-md-4 col-sm-4 search-col-padding">
+            <label>Class</label><br/>
+            <div>
+            <select className="selectpicker cs-select cs-skin-border" name="flying_class" id="flying_class" value={this.state.flyingData.flying_class} onChange={this.handleChange} >
+            <option>Business</option>
+            <option>Economy</option>
+            </select>
+            </div>
+            </div>
+        <div className="clearfix"></div>
+            <div className="col-md-12 search-col-padding">
+            <button type="submit" className="search-button btn transition-effect">Search Flights</button>
+        </div>
+        <div className="clearfix"></div>
+            </form>
+            <button hidden="hidden"><Link to="/listflight" id="hidbut"  >demo</Link></button>
+            </div>
+
+
+            </div>
+
+            </div>
+        </div>
+            <Slider />
+        </div>
+        </div>
+        </section>
         );
     }
 }

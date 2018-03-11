@@ -25,7 +25,7 @@ class SearchController extends Controller
         $to_place = $request['to_place'];
         $date_start = $this->convertDate($request['date_start']);
         
-        $date_end = $this->convertDate($request['date_end']);
+
     
         $adults = $request['adults'];
         $children = $request['children'];
@@ -36,11 +36,17 @@ class SearchController extends Controller
         $input['to_place']  = $request['to_place'];
         $input['date_start']  = $request['date_start'];
         $input['adults']  = $request['adults'];
-        $input['date_end']  = $request['date_end'];
+
         $input['children']  = $request['children'];
 	$input['currency']  = $request['currency'];
 
-
+        if(!empty($request['date_end'])){
+            $date_end = $this->convertDate($request['date_end']);
+            $input['date_end']  = $date_end;
+        }else{
+            $input['date_end']  = "";
+            $date_end="";
+        }
         
         if(!empty($request['sorttype'])){
             $input['sorttype']  = $request['sorttype'];

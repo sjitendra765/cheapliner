@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, browserHistory } from 'react-router';
+
 import CustomHeader from './CustomHeader';
+
 import CustomBody from './CustomBody';
-import MainBody from './MainBody'
+import MainBody from './MainBody';
 
 
 class Flight extends Component {
@@ -16,15 +18,14 @@ class Flight extends Component {
             backgroundImage: 'url(images/cover_bg_3.jpg)'
         }
         return (
-            <div id="fh5co-wrapper">
-            	<div id="fh5co-page">
-                	<CustomHeader />
-                	
-                                        {this.props.children}
-                                        
-                                      </div>
-                                 
-            </div>
+            <div className="site-wrapper">
+
+                	<CustomHeader/>
+                                       {this.props.children}
+
+
+
+                </div>
         );
     }
 }

@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom';
 import NavBar from './NavBar';
 import TabPanes from './TabPanes'
 import {Link} from 'react-router-dom';
+import Slider from './sections/Slider';
+import HowItworks from './sections/HowItworks';
+import SectionOne from './sections/SectionOne';
+import SectionTwo from './sections/SectionTwo';
+import SectionThree from './sections/SectionThree';
+import SectionFour from './sections/SectionFour';
+import SectionFive from './sections/SectionFive';
+import Footer from './sections/SectionFooter';
  
 
 
@@ -15,24 +23,20 @@ class MainBody extends Component {
             backgroundImage: 'url(images/cover_bg_3.jpg)'
         }
         return (
-          <div className="fh5co-hero">
-          <div className="fh5co-overlay"></div>
-          <div className="fh5co-cover" style={divStyle}>
-                          <div className="desc">
-                                <div className="container">
-                                      <div className="row">
-                                        <div className="col-sm-5 col-md-5">
-                                             <div className="tabulation animate-box">
-                                                 <NavBar />
+            <div>
+
+
                                                  <TabPanes />
-                                                 
-                                             </div>
-                                        	</div>
-                                      </div>
-                                </div>
-                          </div>
-          </div>
-        </div>
+
+            <HowItworks />
+            <SectionOne />
+            <SectionTwo />
+            <SectionThree />
+            <SectionFour />
+            <SectionFive />
+            <Footer />
+            </div>
+
         );
     }
 }
