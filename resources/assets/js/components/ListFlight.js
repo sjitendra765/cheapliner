@@ -450,19 +450,20 @@ class ListFlight extends Component {
         </select>
         </div>
         </div>
-        {flightArr.map((r,i)=>
+
         <div className="clearfix"></div>
 
+        {flightArr.map((r,i)=>
             <div className="flight-list-v2">
             <div className="flight-list-main">
             <div className="col-md-2 col-sm-2 text-center airline">
-            <img src="assets/images/airline/airline.jpg" alt="cruise"/>
-            <h6>Vistara</h6>
+            <img src={r.img} alt="cruise"/>
+            <h6>{r.name}</h6>
             </div>
             <div className="col-md-3 col-sm-3 departure">
-            <h3><i className="fa fa-plane"></i> LHR 19:00</h3>
-        <h5 className="bold">SAT, 21 SEP</h5>
-        <h5>London, UK</h5>
+            <h3><i className="fa fa-plane"></i> {this.state.flyingData.from_place} {r.odeparture} </h3>
+        <h5 className="bold">{this.state.flyingData.date_start}</h5>
+        <h5>New York, USA</h5>
         </div>
         <div className="col-md-4 col-sm-4 stop-duration">
             <div className="flight-direction">
@@ -470,39 +471,26 @@ class ListFlight extends Component {
             <div className="stop">
             </div>
             <div className="stop-box">
-            <span>0 Stop</span>
+            <span>{r.stops}stop(s)</span>
         </div>
         <div className="duration text-center">
-            <span><i className="fa fa-clock-o"></i> 02h 00m</span>
+            <span><i className="fa fa-clock-o"></i> {r.oduration}</span>
         </div>
         </div>
         <div className="col-md-3 col-sm-3 destination">
-            <h3><i className="fa fa-plane fa-rotate-90"></i> DEL 21:00</h3>
-        <h5 className="bold">SAT, 21 SEP</h5>
-        <h5>New Delhi, IN</h5>
+            <h3><i className="fa fa-plane fa-rotate-90"></i> {this.state.flyingData.to_place} {r.oarrival}</h3>
+        <h5 className="bold">{this.state.flyingData.date_end}</h5>
+        <h5>Los Angeles, USA</h5>
         </div>
         </div>
         <div className="clearfix"></div>
-            <div className="flight-list-footer">
-            <div className="col-md-6 col-sm-6 col-xs-6 sm-invisible">
-            <span><i className="fa fa-plane"></i> Economy</span>
-        </div>
-        <div className="col-md-6 col-sm-6 col-xs-12 clear-padding">
-            <div className="pull-right">
-            <span>$199/Person</span>
-            <a href="#">BOOK</a>
-            </div>
-            </div>
-            </div>
-            </div>
-            <div className="flight-list-v2">
             <div className="flight-list-main">
             <div className="col-md-2 col-sm-2 text-center airline">
-            <img src="assets/images/airline/airline.jpg" alt="cruise"/>
-            <h6>Spicejet</h6>
-            </div>
-            <div className="col-md-3 col-sm-3 departure">
-            <h3><i className="fa fa-plane"></i> JFK 11:00</h3>
+            <img src={r.img} alt="cruise"/>
+            <h6>{r.name}</h6>
+        </div>
+        <div className="col-md-3 col-sm-3 departure">
+            <h3><i className="fa fa-plane"></i> {this.state.flyingData.to_place} {r.departure} </h3>
         <h5 className="bold">SAT, 21 SEP</h5>
         <h5>New York, USA</h5>
         </div>
@@ -515,11 +503,11 @@ class ListFlight extends Component {
             <span>1 Stop</span>
         </div>
         <div className="duration text-center">
-            <span><i className="fa fa-clock-o"></i> 01h 00m</span>
+            <span><i className="fa fa-clock-o"></i> {r.duration}</span>
         </div>
         </div>
         <div className="col-md-3 col-sm-3 destination">
-            <h3><i className="fa fa-plane fa-rotate-90"></i> DEL 12:00</h3>
+            <h3><i className="fa fa-plane fa-rotate-90"></i> {this.state.flyingData.from_place} {r.arrival}</h3>
         <h5 className="bold">SAT, 21 SEP</h5>
         <h5>Los Angeles, USA</h5>
         </div>
@@ -527,16 +515,17 @@ class ListFlight extends Component {
         <div className="clearfix"></div>
             <div className="flight-list-footer">
             <div className="col-md-6 col-sm-6 col-xs-6 sm-invisible">
-            <span><i className="fa fa-plane"></i> Economy</span>
+            <span><i className="fa fa-plane"></i> {this.state.flyingData.flying_class}</span>
         </div>
         <div className="col-md-6 col-sm-6 col-xs-12 clear-padding">
             <div className="pull-right">
-            <span>$199/Person</span>
+            <span>€{r.price}/Person</span>
             <a href="#">BOOK</a>
             </div>
             </div>
             </div>
             </div>
+        )}
 
 
             <div className="row modify-search modify-flight">
