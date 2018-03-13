@@ -47,6 +47,12 @@ class ListFlight extends Component {
                 to_place: '',
                 date_start:'',
                 date_end: '',
+                adults:'',
+                children:'',
+                pagesize:'',
+                pageindex:'',
+                sorttype:'price',
+                sortorder:'asc'
             },
             flights: this.props.flights,
             list: [],
@@ -261,12 +267,13 @@ console.log(this.props.place)
         });
     }
     async inSlider(){
+
         var returnStartTime =  document.getElementsByClassName('outbound-slider-time')[0].innerHTML;
         var returnEndTime =  document.getElementsByClassName('outbound-slider-time2')[0].innerHTML;
 
         console.log(returnEndTime);
         var flyingData = this.state.flyingData;
-        flyingData.outboundDepartEndTimeboundDepartEndTime = returnEndTime;
+        flyingData.outboundDepartEndTime = returnEndTime;
 
         flyingData.outboundDepartStartTime = returnStartTime;
         this.setState({
@@ -373,8 +380,40 @@ console.log(this.props.place)
         }
     }
   async  modifysearch(event){
-        event.preventDefault();
+        event.preventDefault()
+       console.log(this.props.query);
         var flyingData = this.state.flyingData;
+        var date_start = document.getElementById("departure_date").value
+        var date_end = document.getElementById("return_date").value;
+        var adults = document.getElementById("adults_check").value;
+        var children = document.getElementById("children_check").value;
+        var from_place = document.getElementsByName("from_place")[0].value;
+        var to_place = document.getElementsByName("to_place")[0].value;
+        flyingData.date_start = from_place;
+        flyingData.date_start = to_place;
+        flyingData.date_start = date_start;
+        flyingData.date_end = date_end;
+        flyingData.adults = adults;
+        flyingData.children = children,
+
+
+        flyingData.sorttype = 'price';
+        flyingData.sortorder = 'asc';
+        flyingData.pagesize = "10";
+        flyingData.pageindex = "0";
+        flyingData.outboundDepartStartTime = "00:00";
+        flyingData.outboundDepartEndTime="24:00";
+        flyingData.inboundDepartStartTime = '00:00',
+        flyingData.inboundDepartEndTime =  '24:00',
+
+
+            this.setState({
+                flyingData:flyingData
+            })
+        document.getElementsByClassName('outbound-slider-time')[0].innerHTM = "00:00";
+        document.getElementsByClassName('outbound-slider-time2')[0].innerHTML ="24:00";
+        document.getElementsByClassName('return-slider-time')[0].innerHTML="00:00";
+        document.getElementsByClassName('return-slider-time2')[0].innerHTML="24:00";
         var query = querystring.stringify(flyingData)
         console.log("flying data",flyingData)
         this.setState({modalIsOpen: true});
@@ -555,8 +594,8 @@ console.log(this.props.place)
         <div className="col-md-1 col-sm-6 col-xs-3">
             <div className="form-gp">
             <label>Adult</label>
-            <select className="selectpicker cs-select cs-skin-border" onChange={this.handleChange} value = {this.state.flyingData.adults} id="adults_check">
-            <option>{this.state.flyingData.adults}</option>
+            <select className="selectpicker cs-select cs-skin-border" onChange={this.handleChange} value = {this.state.flyingData.adults} name="adults" id="adults_check">
+
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -569,7 +608,8 @@ console.log(this.props.place)
             <div className="col-md-1 col-sm-6 col-xs-3">
             <div className="form-gp">
             <label>Child</label>
-            <select className="selectpicker cs-select cs-skin-border" onChange={this.handleChange} value = {this.state.flyingData.children} name="children">
+            <select className="selectpicker cs-select cs-skin-border" onChange={this.handleChange} value = {this.state.flyingData.children} name="children" id="children_check">
+            <option>0</option>
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -605,7 +645,7 @@ console.log(this.props.place)
             <span className="outbound-slider-time">00:00</span> - <span className="outbound-slider-time2">24:00</span>
         </p>
         <div className="outbound-sliders_step1">
-            <div id="outbound-range" ononMouseUp={this.inSlider.bind(this)}></div>
+            <div id="outbound-range" onMouseUp={this.inSlider.bind(this)}></div>
             </div>
             </div>
             </div>

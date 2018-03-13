@@ -310,7 +310,9 @@ class TabPanes extends Component {
         >
           <ClipLoader
           color={'#123abc'} 
-          loading={this.state.loading} 
+          loading={this.state.loading}
+          dataBackdrop={"static"}
+          dataKeyboard={"false"}
         />
         </Modal>);
       
