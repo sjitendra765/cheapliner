@@ -19,4 +19,11 @@ Route::get('/', function () {
 
 
 
+Route::get('flightsearch/{from_place}/{to_place}/{flying_class}/{adults}/{children}/{currency}/{date_start}/{date_end}/{sorttype}
+{sortorder}/{pagesize}/{pageindex}/
+',function () {
+    return view('index');
+});
+
+
 

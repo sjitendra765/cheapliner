@@ -27,3 +27,12 @@ export const queryList = (query) => {
     query: query
   }
 };
+export const createPlace = (place) => {
+    // Return action
+    return {
+        // Unique identifier
+        type: 'CREATE_PLACE',
+        // Payload
+        place: place
+    }
+};

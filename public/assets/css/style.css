@@ -7365,3 +7365,16 @@ h5 {
 		width: 100%;
 	}
 }
+.bootstrap-select{
+border-radius:0px;
+height:45px;
+}
+.Select-control {
+
+	height: 45px !important;
+
+}
+.Select-menu-outer{
+	z-index:1000 !important;
+	background-color:#fff !important;
+}

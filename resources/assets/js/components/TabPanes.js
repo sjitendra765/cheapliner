@@ -57,6 +57,10 @@ class TabPanes extends Component {
                     way:2,
 		    currency: 'EUR'
                 },
+            place:{
+                 from_place:{},
+                to_place:{}
+            },
                 options:[],
                 options2:[],
                 redirect: "false",
@@ -101,7 +105,14 @@ class TabPanes extends Component {
         r.data.Places.map(place=>{
             if(place.CityId != '-sky'){
             var placeId = place.PlaceId;
-            var values = {value:placeId, label: placeId.replace('-sky','') + "-" + place.PlaceName}
+            var country = place.CountryName;
+            var placeName = place.PlaceName;
+            var val = {
+                placeId: placeId,
+                country: country,
+                place: placeName
+            }
+            var values = {value:val, label: placeId.replace('-sky','') + "-" + place.PlaceName}
             option.push(values)
         }
         })
@@ -126,7 +137,14 @@ class TabPanes extends Component {
         r.data.Places.map(place=>{
             if(place.CityId != '-sky'){
             var placeId = place.PlaceId;
-            var values = {value:placeId, label: placeId.replace('-sky','') + "-" + place.PlaceName}
+            var country = place.CountryName;
+            var placeName = place.PlaceName;
+            var val = {
+                placeId: placeId,
+                country: country,
+                place: placeName
+            }
+            var values = {value:val, label: placeId.replace('-sky','') + "-" + place.PlaceName}
             option.push(values)
             }
         })
@@ -230,8 +248,8 @@ class TabPanes extends Component {
 
     console.log("sfsdfxbfxb",this.state.flyingData.from_place)
     console.log("new data",document.getElementsByName('from_place')[0].value)
-    var from_place = document.getElementsByName('from_place')[0].value;
-    var to_place = document.getElementsByName('to_place')[0].value; 
+    var from_place = document.getElementsByName('from_place')[0].value.placeId;
+    var to_place = document.getElementsByName('to_place')[0].value.placeId;
     var date_start = document.getElementById("departure_date").value
     var date_end = document.getElementById("return_date").value;
     var flyingclass = document.getElementById("flying_class").value
@@ -244,8 +262,8 @@ class TabPanes extends Component {
 
     //var flyingData={...this.state.flyingData};
     var flyingData = {};
-    flyingData.from_place=from_place;
-    flyingData.to_place = to_place;
+    flyingData.from_place=this.state.flyingData.from_place.value.placeId;
+    flyingData.to_place = this.state.flyingData.to_place.value.placeId;
     flyingData.flying_class = flyingclass;
     flyingData.adults = adults;
     flyingData.children = children;
@@ -270,14 +288,16 @@ class TabPanes extends Component {
 
 
 
-  
+
   this.props.createFlight(data.data);
+   console.log("places",this.state.place)
+   this.props.createPlace(this.state.place)
   this.props.queryList(this.state.flyingData)
   this.setState({modalIsOpen: false});
   document.getElementById('hidbut').click();
   //this.props.router.push('localhost:8000/listflight')
 
- // window.location.href='/listflight';
+/*window.location.href='/listflight?'+query;*/
  }
   }
     render() {
@@ -296,6 +316,7 @@ class TabPanes extends Component {
       
         return (
             <section>
+            { pop }
             <div className="row full-width-search">
             <div className="container clear-padding">
             <div className="col-md-8 search-section">
@@ -313,7 +334,8 @@ class TabPanes extends Component {
             <div className="tab-content">
 
             <div role="tabpanel" className="tab-pane active" id="flight">
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmit} method="GET" action="/flightsearch">
+           <input type='hidden' name='_token' value="<?php echo csrf_token() ?>" />
     <div className="col-md-12 product-search-title">Book Flight Tickets</div>
         <div className="col-md-12 search-col-padding">
             <label className="radio-inline">
@@ -332,7 +354,7 @@ class TabPanes extends Component {
         value={this.state.flyingData.from_place}
         options={options}
         selectComponent={Creatable}
-        onChange={val => {var flyingData={...this.state.flyingData};flyingData.from_place=val;this.setState({flyingData,errFrom: "hidden"})}}
+        onChange={val => {var flyingData={...this.state.flyingData};flyingData.from_place=val;var place={...this.state.place};place.from_place=val.value;this.setState({flyingData,place,errFrom: "hidden"})}}
         onInputChange={this.getautosuggest.bind(this)}
         arrowRender={null,null}
 
@@ -357,7 +379,7 @@ class TabPanes extends Component {
         value={this.state.flyingData.to_place}
         options={options2}
         selectComponent={Creatable}
-        onChange={val => {var flyingData={...this.state.flyingData};flyingData.to_place=val;this.setState({flyingData,errTo: "hidden",sameair:"hidden"})}}
+        onChange={val => {var flyingData={...this.state.flyingData};flyingData.to_place=val;console.log(val);var place = {...this.state.place};place.to_place=val.value;this.setState({flyingData,place,errTo: "hidden",sameair:"hidden",})}}
         onInputChange={this.getautosuggest2.bind(this)}
 
 
@@ -441,7 +463,8 @@ const mapStateToProps = (state, ownProps) =>{
 const mapDispatchToProps = (dispatch) =>{
     return {
         createFlight: flight => dispatch(actions.createFlight(flight)),
-        queryList : query => dispatch(actions.queryList(query))
+        queryList : query => dispatch(actions.queryList(query)),
+        createPlace: place=> dispatch(actions.createPlace(place))
     }
 }
 

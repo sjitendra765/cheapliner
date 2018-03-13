@@ -118,76 +118,57 @@
         $(".radio-event-hanlder").click(function(){
 
 
-            if($(this).val()==="Round Trip"){
+            if($(this).val()=="2"){
+
                 $("#return_date").parents('.search-col-padding').show();
                 $(this).attr('checked', true);
+                $("#inlineRadio1").attr("checked",false);
             }
             else{
                 $("#return_date").parents('.search-col-padding').hide();
                 $(this).attr('checked', true);
+
+                $("#inlineRadio2").attr("checked",false);
 
             }
 
 
         })
     })
-    $("#outbound-range").slider({
-        range: true,
-        min: 0,
-        max: 1440,
-        step: 15,
-        values: [360, 1440],
-        slide: function (e, ui) {
-            var hours1 = Math.floor(ui.values[0] / 60);
-            var minutes1 = ui.values[0] - (hours1 * 60);
-
-            if(hours1.toString().length == 1) hours1 = '0' + hours1;
-            if(minutes1.toString().length == 1) minutes1 = '0' + minutes1;
-
-            $('.outbound-slider-time').html(hours1 + ':' + minutes1);
-
-            var hours2 = Math.floor(ui.values[1] / 60);
-            var minutes2 = ui.values[1] - (hours2 * 60);
-
-            if(hours2.toString().length == 1) hours2 = '0' + hours2;
-            if(minutes2.toString().length == 1) minutes2 = '0' + minutes2;
-
-            $('.outbound-slider-time2').html(hours2 + ':' + minutes2);
-        }
-    });
 
 
-    $("#return-range").slider({
-        range: true,
-        min: 0,
-        max: 1440,
-        step: 15,
-        values: [360, 1440],
-        slide: function (e, ui) {
-            var hours1 = Math.floor(ui.values[0] / 60);
-            var minutes1 = ui.values[0] - (hours1 * 60);
-
-            if(hours1.toString().length == 1) hours1 = '0' + hours1;
-            if(minutes1.toString().length == 1) minutes1 = '0' + minutes1;
 
 
-            $('.return-slider-time').html(hours1 + ':' + minutes1);
+    function doListCall() {
 
-            var hours2 = Math.floor(ui.values[1] / 60);
-            var minutes2 = ui.values[1] - (hours2 * 60);
+        $("#supersized").remove();
+        $( "#example #departure_date" ).datepicker({ minDate: -0, maxDate: "+3M" });
+        $( "#example #return_date" ).datepicker({ minDate: -0, maxDate: "+3M" });
+        $('#example .selectpicker').selectpicker({
+            style: 'custom-select-button',
+            height:45,
 
-            if(hours2.toString().length == 1) hours2 = '0' + hours2;
-            if(minutes2.toString().length == 1) minutes2 = '0' + minutes2;
-
-            $('.return-slider-time2').html(hours2 + ':' + minutes2);
-        }
-    });
-    $( document).ajaxComplete(function() {
-        alert("DSaf");
-        $('.selectpicker').selectpicker({
-            style: 'custom-select-button'
         });
-        $("#outbound-range").slider({
+        var cond = false;
+        $("#example .cs-select").on("click",function(event) {
+            console.log(event)
+            if(!cond ){
+
+                $(this).find(".dropdown-menu").css("display","block");
+
+
+                cond =true;
+            }
+            else{
+                $(this).find(".dropdown-menu").css("display","none");
+
+                cond =false;
+            }
+              return true;
+        });
+
+
+        $("#example  #outbound-range").slider({
             range: true,
             min: 0,
             max: 1440,
@@ -209,11 +190,12 @@
                 if(minutes2.toString().length == 1) minutes2 = '0' + minutes2;
 
                 $('.outbound-slider-time2').html(hours2 + ':' + minutes2);
+
             }
         });
 
 
-        $("#return-range").slider({
+        $("#example  #return-range").slider({
             range: true,
             min: 0,
             max: 1440,
@@ -238,8 +220,12 @@
                 $('.return-slider-time2').html(hours2 + ':' + minutes2);
             }
         });
-    });
+    }
+    /*function callerForStops(event){
+        var stops = $(event).find(".active");
+       alert( $(stops input).attr("id"));
 
+    }*/
 </script>
 </body>
 </html>
