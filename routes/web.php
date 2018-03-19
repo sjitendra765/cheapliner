@@ -11,12 +11,12 @@
 |
 */
 
-
+use app\Http\Controllers\Auth\RegisterController;
 
 Route::get('/', function () {
     return view('index');
 });
-
+Route::get('/getUserData/{id}','RegisterController@getUser');
 
 
 Route::get('flightsearch/{from_place}/{to_place}/{flying_class}/{adults}/{children}/{currency}/{date_start}/{date_end}/{sorttype}
@@ -27,3 +27,7 @@ Route::get('flightsearch/{from_place}/{to_place}/{flying_class}/{adults}/{childr
 
 
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');

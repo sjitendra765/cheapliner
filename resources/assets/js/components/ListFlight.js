@@ -26,13 +26,19 @@ const customStyles = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
+        zIndex:'99999',
+        background:"transparent"
+
+
 
     },
+
     body : {
-        backgroundColor: 'black',
+        background: 'black',
         opacity: '0.8',
         zIndex: '8888'
     }
+
 
 };
 
@@ -51,9 +57,11 @@ class ListFlight extends Component {
                 children:'',
                 pagesize:'',
                 pageindex:'',
-                sorttype:'price',
-                sortorder:'asc'
+                sorttype:'',
+                sortorder:''
             },
+            destinationPlace:'',
+            arrivalPlace:'',
             flights: this.props.flights,
             list: [],
             valueOutBound: {min: 0, max: 23},
@@ -70,16 +78,17 @@ class ListFlight extends Component {
                 twoplus: 'checked'
             },
             place: {},
-            options: [{value: this.props.query.from_place,label: this.props.query.from_place +"-"+ this.props.place.from_place.place}],
-            options2: [{value: this.props.query.to_place,label: this.props.query.to_place +"-"+ this.props.place.to_place.place}],
+            placeShown: {},
+            options: [{value: this.props.query.from_place,label: this.props.query.from_place.replace('-sky'," ") +"-"+ this.props.place.from_place.place}],
+            options2: [{value: this.props.query.to_place,label: this.props.query.to_place.replace('-sky'," ") +"-"+ this.props.place.to_place.place}],
             outboundDepartStartTime: '00:00',
             outboundDepartEndTime: '23:59',
             inboundDepartStartTime: '00:00',
             inboundDepartEndTime: '23:59',
             currencysign: '$',
             selectedOption: 'twoplus',
-            outbound: {value: this.props.query.from_place,label: this.props.query.from_place +"-"+ this.props.place.from_place.place},
-            inbound: {value: this.props.query.to_place,label: this.props.query.to_place +"-"+ this.props.place.to_place.place},
+            outbound: {value: this.props.query.from_place,label: this.props.query.from_place.replace('-sky'," ") +"-"+ this.props.place.from_place.place},
+            inbound: {value: this.props.query.to_place,label: this.props.query.to_place.replace('-sky'," ") +"-"+ this.props.place.to_place.place},
 
     }
         this.handleChange = this.handleChange.bind(this);
@@ -91,9 +100,10 @@ class ListFlight extends Component {
 
         var flyingData = this.state.flyingData;
 
-            flyingData.stops = val
-
-        this.setState({modalIsOpen: true,flyingData:flyingData});
+            flyingData.stops = val;
+            flyingData.pageindex = 0;
+            flyingData.pagesize = 10;
+          this.setState({modalIsOpen: true,flyingData:flyingData});
 
         var query = querystring.stringify(flyingData)
         console.log("flying data",flyingData)
@@ -105,8 +115,14 @@ class ListFlight extends Component {
     }
     componentWillMount(){
         //this.setState({flights:this.props.flights})
-console.log(this.props.place)
-        this.setState({flyingData: this.props.query,place:this.props.place})
+console.log("hey",this.props.place.from_place)
+        this.setState({flyingData: this.props.query,place:this.props.place,placeShown:this.props.place})
+        console.log("hey",this.props.place.from_place)
+        console.log(this.props.place.from_place.placeId.replace('-sky',''))
+        this.setState({
+            destinationPlace:this.props.place.from_place.placeId.replace('-sky',''),
+            arrivalPlace:this.props.place.to_place.placeId.replace('-sky','')
+        })
         if(this.props.query.currency == 'GBP'){
             this.setState({currencysign: '£'})
         }
@@ -164,6 +180,8 @@ console.log(this.props.place)
             flyingData.sorttype = 'duration';
             flyingData.sortorder = 'desc';
         }
+        flyingData.pageindex = 0;
+        flyingData.pagesize = 10;
         this.setState({
             flyingData: flyingData
         })
@@ -184,7 +202,7 @@ console.log(this.props.place)
         var flyingData = this.state.flyingData;
         var len = this.props.flights.length
         console.log("length",len)
-        flyingData.pageindex += 1;
+        flyingData.pageindex = parseInt(flyingData.pageindex )+1;
        /* this.setState({flyingData:flyingData})*/
         console.log("data", flyingData)
         this.setState({modalIsOpen: true});
@@ -274,7 +292,8 @@ console.log(this.props.place)
         console.log(returnEndTime);
         var flyingData = this.state.flyingData;
         flyingData.outboundDepartEndTime = returnEndTime;
-
+        flyingData.pageindex = 0;
+        flyingData.pagesize = 10;
         flyingData.outboundDepartStartTime = returnStartTime;
         this.setState({
             flyingData
@@ -300,7 +319,8 @@ console.log(this.props.place)
             outboundDepartStartTime: flyingData.outboundDepartStartTime})
         this.setState({ valueOutBound:val})
         this.setState({modalIsOpen: true});
-
+        flyingData.pageindex = 0;
+        flyingData.pagesize = 10;
         var query = querystring.stringify(flyingData)
         console.log("flying data",flyingData)
         var data = await axios.post('/api/flightSearch',query)
@@ -389,22 +409,28 @@ console.log(this.props.place)
         var children = document.getElementById("children_check").value;
         var from_place = document.getElementsByName("from_place")[0].value;
         var to_place = document.getElementsByName("to_place")[0].value;
-        flyingData.date_start = from_place;
-        flyingData.date_start = to_place;
+        console.log("hey i am modifier",flyingData,typeof from_place,from_place,to_place,flyingData.from_place)
+        if(from_place.indexOf(',') >= 0){
+            flyingData.from_place = JSON.parse(from_place).placeId;
+        }
+        if(to_place.indexOf(',') >= 0){
+
+        flyingData.to_place = JSON.parse(to_place).placeId;
+        }
         flyingData.date_start = date_start;
         flyingData.date_end = date_end;
         flyingData.adults = adults;
         flyingData.children = children,
 
 
-        flyingData.sorttype = 'price';
-        flyingData.sortorder = 'asc';
+        flyingData.sorttype = '';
+        flyingData.sortorder = '';
         flyingData.pagesize = "10";
         flyingData.pageindex = "0";
-        flyingData.outboundDepartStartTime = "00:00";
-        flyingData.outboundDepartEndTime="24:00";
-        flyingData.inboundDepartStartTime = '00:00',
-        flyingData.inboundDepartEndTime =  '24:00',
+        flyingData.outboundDepartStartTime = "";
+        flyingData.outboundDepartEndTime="";
+        flyingData.inboundDepartStartTime = '',
+        flyingData.inboundDepartEndTime =  '',
 
 
             this.setState({
@@ -420,6 +446,11 @@ console.log(this.props.place)
         var data = await axios.post('/api/flightSearch',query)
         this.props.createFlight(data.data);
         this.setState({modalIsOpen: false});
+        this.setState({
+            destinationPlace:flyingData.from_place.replace('-sky',''),
+            arrivalPlace:flyingData.to_place.replace('-sky',''),
+            place:this.state.placeShown
+        })
     }
     async journeytime(val){
         console.log(val)
@@ -474,7 +505,7 @@ console.log(this.props.place)
             var list = {}
 
         list.price = f.Agent.Price;
-        list.img = f.InboundLeg.FlightNumbers[0].Carrier.ImageUrl;
+
         list.iimg = f.OutboundLeg.FlightNumbers[0].Carrier.ImageUrl;
         list.odeparture = f.OutboundLeg.Departure.split('T')[1];
         list.odeparturedate = f.OutboundLeg.Departure.split('T')[0];
@@ -482,10 +513,10 @@ console.log(this.props.place)
 
             list.od = f.OutboundLeg.Duration;
         list.ostops = f.OutboundLeg.Stops.length
-        if(list.ostops == 0){
+        if(list.ostops == "0"){
             list.ostops = "Direct Flights"
         }
-        else if( list.ostops == 1){
+        else if( list.ostops == "1"){
             list.ostops = "One Stop"
         }
         else{
@@ -500,10 +531,11 @@ console.log(this.props.place)
             list.d = f.InboundLeg.Duration;
             list.arrival = f.InboundLeg.Arrival.split('T')[1];
             list.name = f.Agent.Name;
-
+            list.img = f.InboundLeg.FlightNumbers[0].Carrier.ImageUrl;
             list.departuredate = f.InboundLeg.Departure.split('T')[0];
             list.arrivaldate = f.InboundLeg.Arrival.split('T')[0];
-            list.stops = f.InboundLeg.Stops.length
+            list.stops = f.InboundLeg.Stops.length;
+            list.backlink = f.Agent.DeeplinkUrl;
             if (list.stops == 0) {
                 list.stops = "Direct Flights"
             }
@@ -535,7 +567,7 @@ console.log(this.props.place)
         value={this.state.outbound}
         options={options1}
         selectComponent={Creatable}
-        onChange={val=>{console.log("value on change",val); var flyingData={...this.state.flyingData};flyingData.from_place=val.value.placeId;var place={...this.state.place};place.from_place=val.value;this.setState({outbound:val,flyingData,place})}}
+        onChange={val=>{console.log("value on change",val); var flyingData={...this.state.flyingData};flyingData.from_place=val.value.placeId;var place={...this.state.placeShown};place.from_place=val.value;this.setState({outbound:val,flyingData,placeShown:place})}}
         onInputChange={this.getautosuggest.bind(this)}
         arrowRender={null,null}
 
@@ -560,9 +592,9 @@ console.log(this.props.place)
         name="to_place"
         value={this.state.inbound}
         options={options2}
-
+        selectedValue={{value: this.state.flyingData.to_place,label: this.state.flyingData.to_place +"-"+ this.state.place.to_place.place}}
         selectComponent={Creatable}
-        onChange={val=>{console.log("value on change",val); var flyingData={...this.state.flyingData};flyingData.to_place=val.value.placeId;var place={...this.state.place};place.to_place=val.value;this.setState({inbound:val,flyingData,place})}}
+        onChange={val=>{console.log("value on change",val); var flyingData={...this.state.flyingData};flyingData.to_place=val.value.placeId;var place={...this.state.placeShown};place.to_place=val.value;this.setState({inbound:val,flyingData,placeShown:place})}}
         onInputChange={this.getautosuggest2.bind(this)}
 
 
@@ -709,9 +741,9 @@ console.log(this.props.place)
             <h6>{r.name}  </h6>
             </div>
             <div className="col-md-3 col-sm-3 departure">
-            <h3><i className="fa fa-plane"></i> {this.state.flyingData.from_place} {r.odeparture} </h3>
+            <h3><i className="fa fa-plane"></i> {this.state.destinationPlace} {r.odeparture} </h3>
         <h5 className="bold">{r.odeparturedate}</h5>
-        <h5>{this.state.place.from_place.place},{this.state.place.from_place.country}</h5>
+        <h5>{this.state.destinationPlace},{this.state.place.from_place.country}</h5>
         </div>
         <div className="col-md-4 col-sm-4 stop-duration">
             <div className="flight-direction">
@@ -726,9 +758,9 @@ console.log(this.props.place)
         </div>
         </div>
         <div className="col-md-3 col-sm-3 destination">
-            <h3><i className="fa fa-plane fa-rotate-90"></i> {this.state.flyingData.to_place} {r.oarrival}</h3>
+            <h3><i className="fa fa-plane fa-rotate-90"></i> {this.state.arrivalPlace} {r.oarrival}</h3>
         <h5 className="bold">{r.oarrivaldate}</h5>
-        <h5>{this.state.place.to_place.place},{this.state.place.to_place.country}</h5>
+        <h5>{this.state.arrivalPlace},{this.state.place.to_place.country}</h5>
         </div>
         </div>
         <div className="clearfix"></div>
@@ -739,9 +771,9 @@ console.log(this.props.place)
             <h6>{r.name}</h6>
         </div>
         <div className="col-md-3 col-sm-3 departure">
-            <h3><i className="fa fa-plane"></i> {this.state.flyingData.to_place} {r.departure} </h3>
+            <h3><i className="fa fa-plane"></i> {this.state.arrivalPlace} {r.departure} </h3>
         <h5 className="bold">{r.departuredate}</h5>
-        <h5>{this.state.place.to_place.place},{this.state.place.to_place.country}</h5>
+        <h5>{this.state.arrivalPlace},{this.state.place.to_place.country}</h5>
         </div>
         <div className="col-md-4 col-sm-4 stop-duration">
             <div className="flight-direction">
@@ -756,9 +788,9 @@ console.log(this.props.place)
         </div>
         </div>
         <div className="col-md-3 col-sm-3 destination">
-            <h3><i className="fa fa-plane fa-rotate-90"></i> {this.state.flyingData.from_place} {r.arrival}</h3>
+            <h3><i className="fa fa-plane fa-rotate-90"></i> {this.state.destinationPlace} {r.arrival}</h3>
         <h5 className="bold">{r.arrivaldate}</h5>
-        <h5>{this.state.place.from_place.place},{this.state.place.from_place.country}</h5>
+        <h5>{this.state.destinationPlace},{this.state.place.from_place.country}</h5>
         </div>
         </div>
         }
@@ -770,7 +802,7 @@ console.log(this.props.place)
         <div className="col-md-6 col-sm-6 col-xs-12 clear-padding">
             <div className="pull-right">
             <span>€{r.price}/Person</span>
-            <a href="#">BOOK</a>
+            <a href={r.backlink}>BOOK</a>
             </div>
             </div>
             </div>

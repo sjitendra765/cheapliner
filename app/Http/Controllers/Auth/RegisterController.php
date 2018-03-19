@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Models\UserMeta;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -19,8 +20,12 @@ class RegisterController extends Controller
     | provide this functionality without requiring any additional code.
     |
     */
-
+    private $usermeta;
+    private $user;
     use RegistersUsers;
+
+
+
 
     /**
      * Where to redirect users after login / registration.
@@ -34,8 +39,10 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserMeta $usermeta,User $user)
     {
+        $this->usermeta = $usermeta;
+        $this->user = $user;
         $this->middleware('guest');
     }
 
@@ -62,10 +69,22 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user =  User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+        $usermetas =[];
+        $usermetas['user_id']= $user->id;
+        $usermetas['middle_name'] = $data['middle_name'];
+            $this->usermeta->user_id= $usermetas['user_id'];
+            $this->usermeta->middle_name= $usermetas['middle_name'];
+            $this->usermeta->save();
+            return true;
+    }
+    public function getUser($id){
+
+        $data = $user->get();
+        return $data;
     }
 }

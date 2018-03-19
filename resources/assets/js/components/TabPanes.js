@@ -45,8 +45,8 @@ class TabPanes extends Component {
                     flying_class:'',
                     adults: '1',
                     children: '0',
-                    sorttype:'price',
-                    sortorder:'asc',
+                    sorttype:'',
+                    sortorder:'',
                     inboundDepartEndTime: '23:59',
                     inboundDepartStartTime:'00:00',
                     outboundDepartEndTime:'23:59',
@@ -61,6 +61,7 @@ class TabPanes extends Component {
                  from_place:{},
                 to_place:{}
             },
+
                 options:[],
                 options2:[],
                 redirect: "false",
@@ -118,7 +119,7 @@ class TabPanes extends Component {
         })
         console.log(option)        
        this.setState({
-            options:option
+            options:option,
         })
     })
     .catch(err=>console.log(err))
@@ -270,8 +271,8 @@ class TabPanes extends Component {
     flyingData.currency = currency;
     flyingData.date_start = date_start;
     flyingData.date_end = date_end;
-    flyingData.sorttype = 'price';
-    flyingData.sortorder = 'asc';
+    flyingData.sorttype = '';
+    flyingData.sortorder = '';
     flyingData.pagesize = 10;
     flyingData.pageindex =0;
     console.log("sfdfd")
