@@ -156,11 +156,12 @@ class SearchController extends Controller
         info("Data Status: ".$pricing->getResponseStatus());
         $sesData = $pricing->getResponseHeaders('Location',true);
 
+        $info = array();
 
 
         session('store_session_key', $pricing->getResponseHeaders());
         info("hello",$sesData);
-        $flights  = $pricing->getFlights();
+        $flights=$pricing->getFlights();
        //$flights['last']=$pricing->getResponseHeaders();
         info("Flight Status: ".$pricing->getResponseStatus());
 

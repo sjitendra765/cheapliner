@@ -199,7 +199,8 @@ abstract class TravelService
         if (empty($this->data) || $reset === true) {
             $this->makeRequest('GET', $this->getUrl());
             $this->data = $this->getResponseBody();
-//            dd($this->data);
+           //dd($this->data);
+
         }
         return !empty($property) ? $this->data->{$property} : $this->data;
     }

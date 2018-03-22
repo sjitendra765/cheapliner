@@ -277,6 +277,7 @@ class TabPanes extends Component {
     flyingData.pageindex =0;
     console.log("sfdfd")
     console.log("the data to send",flyingData)
+
     this.setState({
             flyingData:flyingData
         })
@@ -288,14 +289,23 @@ class TabPanes extends Component {
    var data = await axios.post('/api/flightSearch',query)
 
 
+        if(data.data[0].OutboundLegId) {
+            this.props.createFlight(data.data);
+            console.log("places",this.state.place)
+            this.props.createPlace(this.state.place)
+            this.props.queryList(this.state.flyingData)
+            this.setState({modalIsOpen: false});
+            console.log(typeof data.data);
+            document.getElementById('hidbut').click();
+        }
+        else{
+            this.setState({modalIsOpen: false});
+
+            alert("No flights are available")
+        }
 
 
-  this.props.createFlight(data.data);
-   console.log("places",this.state.place)
-   this.props.createPlace(this.state.place)
-  this.props.queryList(this.state.flyingData)
-  this.setState({modalIsOpen: false});
-  document.getElementById('hidbut').click();
+
   //this.props.router.push('localhost:8000/listflight')
 
 /*window.location.href='/listflight?'+query;*/

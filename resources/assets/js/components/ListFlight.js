@@ -109,12 +109,26 @@ class ListFlight extends Component {
         console.log("flying data",flyingData)
         var data = await axios.post('/api/flightSearch',query)
         console.log(data)
+        if(data.data[0].OutboundLegId) {
+            this.props.createFlight(data.data);
+            this.setState({modalIsOpen: false});
 
-        this.props.createFlight(data.data);
-        this.setState({modalIsOpen: false});
+        }
+        else{
+            this.setState({modalIsOpen: false});
+            alert("No flights are available");
+
+
+        }
+
+
+        if(document.getElementById('no_more_data_option')){
+            var noMoreDataOption = document.getElementById('no_more_data_option')
+            noMoreDataOption.parentNode.removeChild(noMoreDataOption)
+        }
     }
     componentWillMount(){
-        //this.setState({flights:this.props.flights})
+       this.setState({flights:this.props.flights})
 console.log("hey",this.props.place.from_place)
         this.setState({flyingData: this.props.query,place:this.props.place,placeShown:this.props.place})
         console.log("hey",this.props.place.from_place)
@@ -208,10 +222,23 @@ console.log("hey",this.props.place.from_place)
         this.setState({modalIsOpen: true});
         var query = querystring.stringify(flyingData)
         var data = await axios.post('/api/flightSearch',query)
-        console.log("new data",data.data)
-        this.props.addFlight(data.data)
+        console.log("new data",data.data,data)
+        if(data.data[0].OutboundLegId) {
+            this.props.addFlight(data.data)
+            this.setState({modalIsOpen: false});
+            console.log(typeof data.data)
+        }
+        else{
+            this.setState({modalIsOpen: false});
 
-        this.setState({modalIsOpen: false});
+            console.log(typeof data.data)
+            var laodMoreButton = document.getElementById('modify-search-button');
+                  laodMoreButton.style.display = "none";
+            var parentComponent = laodMoreButton.parentNode;
+            parentComponent.innerHTML +='<div id="no_more_data_option" style="color:red;text-align:center">Sorry no more data available</div>'
+        }
+
+
 
     }
     async onreturn(val){
@@ -232,14 +259,25 @@ console.log("hey",this.props.place.from_place)
         console.log("flying data",flyingData)
         var data = await axios.post('/api/flightSearch',query)
         console.log(data)
-        if(typeof(data) != 'string'){
+        if(data.data[0].OutboundLegId) {
             this.props.createFlight(data.data);
             this.setState({modalIsOpen: false});
+
         }
         else{
-            this.setState({modalIsOpen: false, showData: false});
-            console.log("not found")
+            this.setState({modalIsOpen: false});
+            alert("No flights are available");
+
+
         }
+
+        var laodMoreButton = document.getElementById('modify-search-button');
+        laodMoreButton.style.display = "block";
+        if(document.getElementById('no_more_data_option')){
+            var noMoreDataOption = document.getElementById('no_more_data_option')
+            noMoreDataOption.parentNode.removeChild(noMoreDataOption)
+        }
+
     }
     async returnSlider(){
        var returnStartTime =  document.getElementsByClassName('return-slider-time')[0].innerHTML;
@@ -256,8 +294,26 @@ console.log("hey",this.props.place.from_place)
         var query = querystring.stringify(flyingData)
         var data = await axios.post('/api/flightSearch',query)
         console.log("new data",data.data)
-        this.props.createFlight(data.data)
-        this.setState({modalIsOpen: false});
+        if(data.data[0].OutboundLegId) {
+            this.props.createFlight(data.data);
+            this.setState({modalIsOpen: false});
+
+
+        }
+        else{
+            this.setState({modalIsOpen: false});
+            alert("No flights are available");
+
+
+        }
+        var laodMoreButton = document.getElementById('modify-search-button');
+        laodMoreButton.style.display = "block";
+
+        if(document.getElementById('no_more_data_option')){
+            var noMoreDataOption = document.getElementById('no_more_data_option')
+            noMoreDataOption.parentNode.removeChild(noMoreDataOption)
+        }
+
     }
 
     handleChange(event) {
@@ -302,8 +358,24 @@ console.log("hey",this.props.place.from_place)
         var query = querystring.stringify(flyingData)
         var data = await axios.post('/api/flightSearch',query)
         console.log("new data",data.data)
-        this.props.createFlight(data.data)
-        this.setState({modalIsOpen: false});
+        if(data.data[0].OutboundLegId) {
+            this.props.createFlight(data.data);
+            this.setState({modalIsOpen: false});
+
+        }
+        else{
+            this.setState({modalIsOpen: false});
+            alert("No flights are available");
+
+
+        }
+        var laodMoreButton = document.getElementById('modify-search-button');
+        laodMoreButton.style.display = "block";
+
+        if(document.getElementById('no_more_data_option')){
+            var noMoreDataOption = document.getElementById('no_more_data_option')
+            noMoreDataOption.parentNode.removeChild(noMoreDataOption)
+        }
     }
     async outbound(val){
 
@@ -325,13 +397,23 @@ console.log("hey",this.props.place.from_place)
         console.log("flying data",flyingData)
         var data = await axios.post('/api/flightSearch',query)
         console.log(data)
-        if(typeof(data) != 'string'){
+        if(data.data[0].OutboundLegId) {
             this.props.createFlight(data.data);
             this.setState({modalIsOpen: false});
+
         }
         else{
-            this.setState({modalIsOpen: false, showData: false});
-            console.log("not found")
+            this.setState({modalIsOpen: false});
+            alert("No flights are available");
+
+
+        }
+        var laodMoreButton = document.getElementById('modify-search-button');
+        laodMoreButton.style.display = "block";
+
+        if(document.getElementById('no_more_data_option')){
+            var noMoreDataOption = document.getElementById('no_more_data_option')
+            noMoreDataOption.parentNode.removeChild(noMoreDataOption)
         }
 
     }
@@ -402,6 +484,7 @@ console.log("hey",this.props.place.from_place)
   async  modifysearch(event){
         event.preventDefault()
        console.log(this.props.query);
+
         var flyingData = this.state.flyingData;
         var date_start = document.getElementById("departure_date").value
         var date_end = document.getElementById("return_date").value;
@@ -444,13 +527,31 @@ console.log("hey",this.props.place.from_place)
         console.log("flying data",flyingData)
         this.setState({modalIsOpen: true});
         var data = await axios.post('/api/flightSearch',query)
-        this.props.createFlight(data.data);
-        this.setState({modalIsOpen: false});
-        this.setState({
-            destinationPlace:flyingData.from_place.replace('-sky',''),
-            arrivalPlace:flyingData.to_place.replace('-sky',''),
-            place:this.state.placeShown
-        })
+        if(data.data[0].OutboundLegId) {
+            this.props.createFlight(data.data);
+            this.props.queryList(this.state.flyingData)
+            this.setState({modalIsOpen: false});
+            this.setState({
+                destinationPlace:flyingData.from_place.replace('-sky',''),
+                arrivalPlace:flyingData.to_place.replace('-sky',''),
+                place:this.state.placeShown
+            })
+
+        }
+        else{
+            this.setState({modalIsOpen: false});
+            alert("No flights are available");
+
+
+        }
+
+        var laodMoreButton = document.getElementById('modify-search-button');
+        laodMoreButton.style.display = "block";
+        if(document.getElementById('no_more_data_option')){
+            var noMoreDataOption = document.getElementById('no_more_data_option')
+            noMoreDataOption.parentNode.removeChild(noMoreDataOption)
+        }
+
     }
     async journeytime(val){
         console.log(val)
@@ -463,13 +564,24 @@ console.log("hey",this.props.place.from_place)
         console.log("flying data",flyingData)
         var data = await axios.post('/api/flightSearch',query)
         console.log(data)
-        if(typeof(data) != 'string'){
+        if(data.data[0].OutboundLegId) {
             this.props.createFlight(data.data);
             this.setState({modalIsOpen: false});
+
+
         }
         else{
-            this.setState({modalIsOpen: false, showData: false});
-            console.log("not found")
+            this.setState({modalIsOpen: false});
+            alert("No flights are available");
+
+
+        }
+        var laodMoreButton = document.getElementById('modify-search-button');
+        laodMoreButton.style.display = "block";
+
+        if(document.getElementById('no_more_data_option')){
+            var noMoreDataOption = document.getElementById('no_more_data_option')
+            noMoreDataOption.parentNode.removeChild(noMoreDataOption)
         }
     }
     render() {
@@ -813,7 +925,7 @@ console.log("hey",this.props.place.from_place)
             <div className="row modify-search modify-flight">
             <div className="col-md-6 col-md-offset-3 col-sm-6 col-xs-6">
             <div className="form-gp">
-            <button type="submit" className="modify-search-button btn transition-effect" onClick={this.loadMore.bind(this)}>Load more</button>
+            <button type="submit" className="modify-search-button btn transition-effect" id="modify-search-button"  onClick={this.loadMore.bind(this)}>Load more</button>
         </div>
         </div>
         </div>
@@ -828,6 +940,8 @@ console.log("hey",this.props.place.from_place)
 }
 const mapStateToProps = (state, ownProps) =>{
     console.log("places of destib",state.flightReducer)
+    console.log("here i am ",state.flightReducer.flights);
+
     return {
         flights: state.flightReducer.flights,
         query: state.flightReducer.query[0],
@@ -836,9 +950,11 @@ const mapStateToProps = (state, ownProps) =>{
 }
 
 const mapDispatchToProps = (dispatch) =>{
+
     return {
         createFlight: flight => dispatch(actions.createFlight(flight)),
-        addFlight: (flight) => dispatch(actions.addFlight(flight))
+        addFlight: (flight) => dispatch(actions.addFlight(flight)),
+        queryList : query => dispatch(actions.queryList(query))
 }
 }
 
